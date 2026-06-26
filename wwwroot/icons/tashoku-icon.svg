@@ -1,29 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="100%" height="100%" rx="40" ry="40" fill="#FFFFFF" />
-  <!-- 3x3 grid of cells; draw nine circular pegs centered in each cell -->
-  <g transform="translate(32,32)">
-	<!-- cell size 448 / 3 = 149.333; use 149 spacing with padding -->
-	<defs>
-	  <style>
-		.dot { r: 24; }
-	  </style>
-	</defs>
-	<!-- Colors (match CSS variables used in the app) -->
-	<!-- --c0: #E53E3E; --c1: #38A169; --c2: #3182CE; --c3: #D69E2E; --c4: #805AD5; --c5: #0BC5EA; --c6: #F97316; --c7: #EC4899; --c8: #84CC16 -->
-	<g id="dots">
-	  <!-- Row 1 -->
-	  <circle cx="74" cy="74" r="30" fill="#E53E3E" />
-	  <circle cx="224" cy="74" r="30" fill="#38A169" />
-	  <circle cx="374" cy="74" r="30" fill="#3182CE" />
-	  <!-- Row 2 -->
-	  <circle cx="74" cy="224" r="30" fill="#D69E2E" />
-	  <circle cx="224" cy="224" r="30" fill="#805AD5" />
-	  <circle cx="374" cy="224" r="30" fill="#0BC5EA" />
-	  <!-- Row 3 -->
-	  <circle cx="74" cy="374" r="30" fill="#F97316" />
-	  <circle cx="224" cy="374" r="30" fill="#EC4899" />
-	  <circle cx="374" cy="374" r="30" fill="#84CC16" />
-	</g>
+  <!-- Rounded square background -->
+  <rect x="0" y="0" width="512" height="512" rx="48" ry="48" fill="#FFFFFF" stroke="#1F2937" stroke-width="8" />
+
+  <!-- 3x3 grid: two vertical and two horizontal divider lines -->
+  <!-- Positions at 1/3 and 2/3 of 512 = 170.6667 and 341.3333 -->
+  <g stroke="#1F2937" stroke-width="22" stroke-linecap="square" fill="none">
+	<!-- Vertical dividers -->
+	<line x1="170.6667" y1="48" x2="170.6667" y2="464" />
+	<line x1="341.3333" y1="48" x2="341.3333" y2="464" />
+	<!-- Horizontal dividers -->
+	<line x1="48" y1="170.6667" x2="464" y2="170.6667" />
+	<line x1="48" y1="341.3333" x2="464" y2="341.3333" />
+  </g>
+
+  <!-- Optional thin inner separators for crisp small sizes -->
+  <g stroke="#111827" stroke-width="2" fill="none" opacity="0.08">
+	<line x1="48" y1="48" x2="464" y2="48" />
+	<line x1="48" y1="464" x2="464" y2="464" />
   </g>
 </svg>
