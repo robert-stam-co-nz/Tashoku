@@ -1,46 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
   <!-- Rounded square background -->
-  <rect x="0" y="0" width="512" height="512" rx="48" ry="48" fill="#FFFFFF" stroke="#1F2937" stroke-width="8" />
+  <rect x="4" y="4" width="504" height="504" rx="48" ry="48" fill="#FFFFFF" stroke="#1F2937" stroke-width="8" />
 
   <!-- 3x3 grid: two vertical and two horizontal divider lines -->
-  <!-- Positions at 1/3 and 2/3 of 512 = 170.6667 and 341.3333 -->
+  <!-- Usable area: 52 to 460 (504px wide) -->
+  <!-- Dividers at 1/3 and 2/3: 219.33 and 292.67 -->
   <g stroke="#1F2937" stroke-width="22" stroke-linecap="square" fill="none">
 	<!-- Vertical dividers -->
-	<line x1="170.6667" y1="48" x2="170.6667" y2="464" />
-	<line x1="341.3333" y1="48" x2="341.3333" y2="464" />
+	<line x1="219.3333" y1="52" x2="219.3333" y2="460" />
+	<line x1="292.6667" y1="52" x2="292.6667" y2="460" />
 	<!-- Horizontal dividers -->
-	<line x1="48" y1="170.6667" x2="464" y2="170.6667" />
-	<line x1="48" y1="341.3333" x2="464" y2="341.3333" />
-  </g>
-
-  <!-- Optional thin inner separators for crisp small sizes -->
-  <g stroke="#111827" stroke-width="2" fill="none" opacity="0.08">
-	<line x1="48" y1="48" x2="464" y2="48" />
-	<line x1="48" y1="464" x2="464" y2="464" />
+	<line x1="52" y1="219.3333" x2="460" y2="219.3333" />
+	<line x1="52" y1="292.6667" x2="460" y2="292.6667" />
   </g>
 
   <!-- Colored dots centered in each 3x3 cell -->
   <g id="dots" fill="none">
-	<!-- Cell centers accounting for grid line thickness (stroke-width 22 = ±11px) -->
-	<!-- Col 1 center: (48 + 170.6667) / 2 ≈ 109.33 -->
-	<!-- Col 2 center: (170.6667 + 341.3333) / 2 = 256 -->
-	<!-- Col 3 center: (341.3333 + 464) / 2 ≈ 402.67 -->
-	<!-- Row 1 center: (48 + 170.6667) / 2 ≈ 109.33 -->
-	<!-- Row 2 center: (170.6667 + 341.3333) / 2 = 256 -->
-	<!-- Row 3 center: (341.3333 + 464) / 2 ≈ 402.67 -->
+	<!-- Cell boundaries: 52 to 219.3333 to 292.6667 to 460 -->
+	<!-- Cell 1: 52 to 219.3333, center = 135.6667 -->
+	<!-- Cell 2: 219.3333 to 292.6667, center = 256 -->
+	<!-- Cell 3: 292.6667 to 460, center = 376.3333 -->
 
 	<!-- Row 1 -->
-	<circle cx="109.3333" cy="109.3333" r="50" fill="#E53E3E" stroke="#FFFFFF" stroke-width="4" />
-	<circle cx="256"      cy="109.3333" r="50" fill="#38A169" stroke="#FFFFFF" stroke-width="4" />
-	<circle cx="402.6667" cy="109.3333" r="50" fill="#3182CE" stroke="#FFFFFF" stroke-width="4" />
+	<circle cx="135.6667" cy="135.6667" r="50" fill="#E53E3E" stroke="#FFFFFF" stroke-width="4" />
+	<circle cx="256"      cy="135.6667" r="50" fill="#38A169" stroke="#FFFFFF" stroke-width="4" />
+	<circle cx="376.3333" cy="135.6667" r="50" fill="#3182CE" stroke="#FFFFFF" stroke-width="4" />
 	<!-- Row 2 -->
-	<circle cx="109.3333" cy="256"      r="50" fill="#D69E2E" stroke="#FFFFFF" stroke-width="4" />
+	<circle cx="135.6667" cy="256"      r="50" fill="#D69E2E" stroke="#FFFFFF" stroke-width="4" />
 	<circle cx="256"      cy="256"      r="50" fill="#805AD5" stroke="#FFFFFF" stroke-width="4" />
-	<circle cx="402.6667" cy="256"      r="50" fill="#0BC5EA" stroke="#FFFFFF" stroke-width="4" />
+	<circle cx="376.3333" cy="256"      r="50" fill="#0BC5EA" stroke="#FFFFFF" stroke-width="4" />
 	<!-- Row 3 -->
-	<circle cx="109.3333" cy="402.6667" r="50" fill="#F97316" stroke="#FFFFFF" stroke-width="4" />
-	<circle cx="256"      cy="402.6667" r="50" fill="#EC4899" stroke="#FFFFFF" stroke-width="4" />
-	<circle cx="402.6667" cy="402.6667" r="50" fill="#84CC16" stroke="#FFFFFF" stroke-width="4" />
+	<circle cx="135.6667" cy="376.3333" r="50" fill="#F97316" stroke="#FFFFFF" stroke-width="4" />
+	<circle cx="256"      cy="376.3333" r="50" fill="#EC4899" stroke="#FFFFFF" stroke-width="4" />
+	<circle cx="376.3333" cy="376.3333" r="50" fill="#84CC16" stroke="#FFFFFF" stroke-width="4" />
   </g>
 </svg>
