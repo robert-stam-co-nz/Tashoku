@@ -1294,135 +1294,13 @@ function buildShareText() {
   return parts.join('\n');
 }
 
-function roundRectPath(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y,     x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x,     y + h, r);
-  ctx.arcTo(x,     y + h, x,     y,     r);
-  ctx.arcTo(x,     y,     x + w, y,     r);
-  ctx.closePath();
-}
 
-function buildShareImage() {
-  return new Promise((resolve) => {
-    if (typeof document.createElement('canvas').getContext !== 'function') {
-      resolve(null); return;
-    }
-    const rootStyle = getComputedStyle(document.documentElement);
-    const cssVar = (name) => rootStyle.getPropertyValue(name).trim();
-
-    const W = 640, H = 820, DPR = 2;
-    const canvas = document.createElement('canvas');
-    canvas.width = W * DPR;
-    canvas.height = H * DPR;
-    const ctx = canvas.getContext('2d');
-    ctx.scale(DPR, DPR);
-
-    const bg = cssVar('--bg'), surface = cssVar('--surface'), border = cssVar('--panel-border');
-    const text = cssVar('--text'), muted = cssVar('--text-muted');
-    const outer = cssVar('--outer-line'), accent = cssVar('--accent');
-    const FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-
-    const pad = 28;
-    roundRectPath(ctx, pad, pad, W - pad*2, H - pad*2, 24);
-    ctx.fillStyle = surface;
-    ctx.fill();
-    ctx.lineWidth = 1.5;
-    ctx.strokeStyle = border;
-    ctx.stroke();
-
-    ctx.textAlign = 'center';
-    ctx.fillStyle = text;
-    ctx.font = `700 36px ${FONT}`;
-    ctx.fillText('Tashoku', W / 2, pad + 58);
-
-    const g = fullGrid();
-    const N = app.cfg.N;
-    const diffLabel = app.diff[0].toUpperCase() + app.diff.slice(1);
-    ctx.fillStyle = muted;
-    ctx.font = `500 18px ${FONT}`;
-        const resultLabel = app.failed ? 'Unsolved' : 'Solved';
-    ctx.fillText(`${resultLabel} · ${diffLabel}`, W / 2, pad + 90);
-    const gridSize = 460;
-    const cell = gridSize / N;
-    const gx = (W - gridSize) / 2;
-    const gy = pad + 122;
-    const gap = 3;
-
-    // Resolve all six peg colours once (getComputedStyle is a style recalc)
-    const pegColors = COLOR_CSS.map(cssVar);
-
-    for (let r = 0; r < N; r++) {
-      for (let c = 0; c < N; c++) {
-        const v = g[r * N + c];
-        const x = gx + c * cell, y = gy + r * cell;
-        roundRectPath(ctx, x + gap/2, y + gap/2, cell - gap, cell - gap, 8);
-        ctx.fillStyle = v !== -1 ? pegColors[v] : '#E5E7EB';
-        ctx.fill();
-      }
-    }
-
-    ctx.strokeStyle = outer;
-    ctx.lineWidth = 3;
-    for (let r = app.cfg.boxRows; r < N; r += app.cfg.boxRows) {
-      ctx.beginPath();
-      ctx.moveTo(gx, gy + r * cell);
-      ctx.lineTo(gx + gridSize, gy + r * cell);
-      ctx.stroke();
-    }
-    for (let c = app.cfg.boxCols; c < N; c += app.cfg.boxCols) {
-      ctx.beginPath();
-      ctx.moveTo(gx + c * cell, gy);
-      ctx.lineTo(gx + c * cell, gy + gridSize);
-      ctx.stroke();
-    }
-    ctx.strokeRect(gx, gy, gridSize, gridSize);
-
-    ctx.strokeStyle = 'rgba(79,70,229,0.55)';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(gx + 3, gy + 3);
-    ctx.lineTo(gx + gridSize - 3, gy + gridSize - 3);
-    ctx.moveTo(gx + gridSize - 3, gy + 3);
-    ctx.lineTo(gx + 3, gy + gridSize - 3);
-    ctx.stroke();
-
-    const statLine = [];
-    if (app.hintsUsed > 0) statLine.push(app.hintsUsed + '/' + app.maxHints + ' hints used');
-    if (app.errorCount > 0) statLine.push(app.errorCount + '/' + app.maxErrors + ' mistakes');
-    if (!statLine.length) statLine.push('No hints · No mistakes');
-    ctx.fillStyle = muted;
-    ctx.font = `500 16px ${FONT}`;
-    ctx.fillText(statLine.join(' · '), W / 2, gy + gridSize + 68);
-
-    ctx.fillStyle = accent;
-    ctx.font = `600 15px ${FONT}`;
-    ctx.fillText('Tashoku', W / 2, H - pad - 18);
-
-    canvas.toBlob((blob) => resolve(blob), 'image/png');
-  });
-}
 
 async function shareResult() {
   const text = buildShareText();
   const url  = location.href;
 
-  // app.shareBlob is pre-generated when the puzzle ends, so no await is needed
-  // before navigator.share() — the user-gesture window stays open.
-  const blob = app.shareBlob;
-  const file = blob ? new File([blob], 'tashoku.png', {type:'image/png'}) : null;
-
-  if (file && navigator.canShare && navigator.canShare({files:[file]})) {
-    try {
-      await navigator.share({title:'Tashoku', text, url, files:[file]});
-      return;
-    } catch (err) { if (err && err.name === 'AbortError') return; }
-  }
-
+  // Share text + url only; do not create or attach an image snapshot
   if (navigator.share) {
     try {
       await navigator.share({title:'Tashoku', text, url});
@@ -1430,10 +1308,11 @@ async function shareResult() {
     } catch (err) { if (err && err.name === 'AbortError') return; }
   }
 
-  fallbackShare(text + '\n' + url, blob || await buildShareImage());
+  // Fallback: copy text to clipboard or show alert
+  fallbackShare(text + '\n' + url);
 }
 
-function fallbackShare(text, blob) {
+function fallbackShare(text) {
   const toast = document.getElementById('shareToast');
   const showToast = (msg) => {
     if (!toast) return;
@@ -1441,25 +1320,13 @@ function fallbackShare(text, blob) {
     toast.style.display = 'block';
     setTimeout(() => { toast.style.display = 'none'; }, 2200);
   };
-  if (blob) downloadBlob(blob, 'tashoku-result.png');
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text)
-      .then(() => showToast(blob ? 'Image saved · text copied!' : 'Copied to clipboard!'))
-      .catch(() => showToast(blob ? 'Image saved!' : text));
-  } else if (blob) {
-    showToast('Image saved!');
+      .then(() => showToast('Copied to clipboard!'))
+      .catch(() => alert(text));
   } else {
     alert(text);
   }
-}
-
-function downloadBlob(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename;
-  document.body.appendChild(a);
-  a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 /* ── PWA state ─────────────────────────────────────────────── */
@@ -1490,7 +1357,6 @@ function onPuzzleStateChange(solved, conflictCount, failed) {
     shareBtn.disabled = !gameEnded;
     // Pre-generate image and focus button the first time the game ends
     if (gameEnded && !wasEnded) {
-      if (!app.shareBlob) buildShareImage().then(b => { app.shareBlob = b; });
       setTimeout(() => { if (shareBtn) shareBtn.focus(); }, 150);
     }
   }
