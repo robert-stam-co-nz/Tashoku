@@ -26,17 +26,17 @@
 	<!-- centers (relative to group): 69.3333, 208.0, 346.6667 -->
 	<g fill="none">
 	  <!-- Row 1 -->
-	  <circle cx="69.3333"  cy="69.3333"  r="28" fill="#E53E3E" stroke="#FFFFFF" stroke-width="4" />
-	  <circle cx="208.0"    cy="69.3333"  r="28" fill="#38A169" stroke="#FFFFFF" stroke-width="4" />
-	  <circle cx="346.6667" cy="69.3333"  r="28" fill="#3182CE" stroke="#FFFFFF" stroke-width="4" />
+	  <circle cx="69.3333"  cy="69.3333"  r="17.3333" fill="#E53E3E" stroke="#FFFFFF" stroke-width="4" />
+	  <circle cx="208.0"    cy="69.3333"  r="17.3333" fill="#38A169" stroke="#FFFFFF" stroke-width="4" />
+	  <circle cx="346.6667" cy="69.3333"  r="17.3333" fill="#3182CE" stroke="#FFFFFF" stroke-width="4" />
 	  <!-- Row 2 -->
-	  <circle cx="69.3333"  cy="208.0"    r="28" fill="#D69E2E" stroke="#FFFFFF" stroke-width="4" />
-	  <circle cx="208.0"    cy="208.0"    r="28" fill="#805AD5" stroke="#FFFFFF" stroke-width="4" />
-	  <circle cx="346.6667" cy="208.0"    r="28" fill="#0BC5EA" stroke="#FFFFFF" stroke-width="4" />
+	  <circle cx="69.3333"  cy="208.0"    r="17.3333" fill="#D69E2E" stroke="#FFFFFF" stroke-width="4" />
+	  <circle cx="208.0"    cy="208.0"    r="17.3333" fill="#805AD5" stroke="#FFFFFF" stroke-width="4" />
+	  <circle cx="346.6667" cy="208.0"    r="17.3333" fill="#0BC5EA" stroke="#FFFFFF" stroke-width="4" />
 	  <!-- Row 3 -->
-	  <circle cx="69.3333"  cy="346.6667" r="28" fill="#F97316" stroke="#FFFFFF" stroke-width="4" />
-	  <circle cx="208.0"    cy="346.6667" r="28" fill="#EC4899" stroke="#FFFFFF" stroke-width="4" />
-	  <circle cx="346.6667" cy="346.6667" r="28" fill="#84CC16" stroke="#FFFFFF" stroke-width="4" />
+	  <circle cx="69.3333"  cy="346.6667" r="17.3333" fill="#F97316" stroke="#FFFFFF" stroke-width="4" />
+	  <circle cx="208.0"    cy="346.6667" r="17.3333" fill="#EC4899" stroke="#FFFFFF" stroke-width="4" />
+	  <circle cx="346.6667" cy="346.6667" r="17.3333" fill="#84CC16" stroke="#FFFFFF" stroke-width="4" />
 	</g>
   </g>
 </svg>
