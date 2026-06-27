@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Tashoku</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#4F46E5"/>
+<link rel="icon" href="icons/icon-192.png"/>
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="Tashoku"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<style>
+:root {
+  /* Page & surface */
+  --bg:           #F3F4F6;
+  --surface:      #FFFFFF;
+  --panel:        #F9FAFB;
+  --panel-border: #E5E7EB;
+
+  /* Grid lines */
+  --cell-bg:      #FFFFFF;
+  --cell-empty-border: #C9CDD2;
+  --outer-line:   #1F2937;
+
+  /* Text */
+  --text:         #111827;
+  --text-muted:   #6B7280;
+  --text-light:   #9CA3AF;
+
+  /* Accent & states */
+  --accent:       #4F46E5;
+  --accent-light: #EEF2FF;
+  --danger:       #DC2626;
+  --danger-bg:    rgba(220,38,38,0.12);
+  --success:      #16A34A;
+  --warn:         #B45309;
+  --warn-bg:      rgba(180,83,9,0.10);
+
+  /* Nine distinct peg colours */
+  --c0: #E53E3E;   /* Red     */
+  --c1: #38A169;   /* Green   */
+  --c2: #3182CE;   /* Blue    */
+  --c3: #D69E2E;   /* Yellow  */
+  --c4: #805AD5;   /* Purple  */
+  --c5: #0BC5EA;   /* Teal    */
+  --c6: #F97316;   /* Orange  */
+  --c7: #EC4899;   /* Pink    */
+  --c8: #84CC16;   /* Lime    */
+
+  /* Dimmer versions for given-cell inner ring */
+  --c0d: #C53030;
+  --c1d: #276749;
+  --c2d: #2B6CB0;
+  --c3d: #B7791F;
+  --c4d: #553C9A;
+  --c5d: #00A3C4;
+  --c6d: #C2410C;
+  --c7d: #BE185D;
+  --c8d: #4D7C0F;
+
+  /* Text colour on each fill (black or white) */
+  --c0t: #fff; --c1t: #fff; --c2t: #fff;
+  --c3t: #78350f; --c4t: #fff; --c5t: #164e63;
+  --c6t: #431407; --c7t: #fff; --c8t: #1a2e05;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.app {
+  width: 100%;
+  max-width: 480px;
+  padding: 24px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+h1 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.subtitle-rule {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ── Cards ───────────────────────────────────────────────── */
+.controls {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.card {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.card-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+/* ── Segmented control ───────────────────────────────────── */
+.seg {
+  display: flex;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.seg-btn {
+  flex: 1;
+  padding: 5px 0;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+}
+
+.seg-btn.active {
+  background: var(--surface);
+  color: var(--accent);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.10);
+}
+
+/* ── Toggle ──────────────────────────────────────────────── */
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 0;
+}
+
+.toggle-track {
+  width: 38px; height: 21px;
+  border-radius: 11px;
+  background: var(--panel-border);
+  position: relative;
+  transition: background 0.15s;
+  flex-shrink: 0;
+  border: 1px solid #D1D5DB;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  background: #9CA3AF;
+  transition: transform 0.15s, background 0.15s;
+}
+
+.toggle-btn.on .toggle-track { background: var(--accent-light); border-color: var(--accent); }
+.toggle-btn.on .toggle-thumb { transform: translateX(17px); background: var(--accent); }
+
+/* ── Difficulty ──────────────────────────────────────────── */
+.diff-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.diff-btn {
+  flex: 1;
+  padding: 9px 0;
+  border-radius: 10px;
+  border: 1.5px solid var(--panel-border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.13s, color 0.13s, border-color 0.13s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.diff-btn:hover:not(.active) {
+  border-color: #9CA3AF;
+  color: var(--text);
+}
+
+.diff-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── Board ───────────────────────────────────────────────── */
+.board-wrap {
+  position: relative;
+  width: min(94vw, 450px);
+  aspect-ratio: 1;
+}
+
+.diag-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.diag-svg line {
+  stroke: #374151;
+  stroke-width: 1;
+  stroke-dasharray: 6 6;
+  opacity: 0.22;
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  border: 3px solid var(--outer-line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--cell-bg);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+}
+
+/* ── Cells ───────────────────────────────────────────────── */
+.cell {
+  position: relative;
+  background: var(--cell-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.12s, filter 0.12s;
+  /* borders applied per-cell via JS for correct box lines */
+}
+
+.cell:hover:not(.given) { filter: brightness(0.97); }
+.cell:focus-visible { outline: 3px solid var(--accent); outline-offset: -2px; z-index: 4; }
+
+/* Peg — sized for 9×9 cells (~48px each) */
+.peg {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.18);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.peg.given {
+  box-shadow: 0 2px 5px rgba(0,0,0,0.18), 0 0 0 2px rgba(255,255,255,0.9);
+}
+
+.peg.hint {
+  box-shadow: 0 2px 5px rgba(0,0,0,0.18), 0 0 0 2px var(--warn);
+}
+
+.peg.conflict {
+  box-shadow: 0 0 0 3px var(--danger), 0 0 10px 2px rgba(220,38,38,0.45);
+}
+
+/* Empty indicator */
+.cell-empty-dot {
+  width: 20%;
+  height: 20%;
+  border-radius: 50%;
+  background: var(--cell-empty-border);
+  opacity: 0.5;
+}
+
+/* Pencil-mark / candidate mini-grid — 3×3, echoing the box shape */
+.candidates-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 88%;
+  height: 88%;
+  gap: 1px;
+}
+
+.candidate-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  font-size: 6px;
+  font-weight: 800;
+  line-height: 1;
+  user-select: none;
+  background: var(--panel);
+}
+
+.candidate-slot.active {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+
+/* ── Palette ─────────────────────────────────────────────── */
+.palette-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.palette-row {
+  display: grid;
+  grid-template-columns: repeat(5, 40px);
+  justify-content: center;
+  gap: 8px;
+}
+
+.swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.swatch.active {
+  border-color: var(--text);
+  transform: scale(1.16);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+}
+
+.swatch.eraser {
+  background: var(--surface);
+  border: 2px solid var(--panel-border);
+  color: var(--text-muted);
+  font-size: 17px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.swatch.eraser.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: scale(1.16);
+}
+
+.swatch.done {
+  opacity: 0.42;
+  cursor: default;
+  transform: none !important;
+  box-shadow: none;
+  position: relative;
+}
+.swatch.done::after {
+  content: '✓';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 900;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.22);
+  color: rgba(255,255,255,0.92);
+  pointer-events: none;
+}
+
+.palette-hint {
+  font-size: 11.5px;
+  color: var(--text-light);
+}
+
+/* ── Actions ─────────────────────────────────────────────── */
+.actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.btn {
+  flex: 1;
+  padding: 11px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: filter 0.12s, transform 0.1s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn:hover { filter: brightness(1.06); }
+.btn:active { transform: scale(0.98); filter: brightness(0.96); }
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: none;
+}
+.btn:disabled:hover { filter: none; }
+.btn:disabled:active { transform: none; }
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.btn-ghost {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--panel-border);
+}
+
+/* ── Status ──────────────────────────────────────────────── */
+.status-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-height: 54px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1.5px solid currentColor;
+}
+
+.badge.solved-badge   { color: var(--success); background: rgba(22,163,74,0.12);
+                        font-size: 13px; padding: 5px 18px; }
+
+.status-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.status-text.conflict-text { color: var(--danger); font-weight: 600; }
+
+.badge.failed-badge { color: var(--danger); background: rgba(220,38,38,0.10);
+                        font-size: 13px; padding: 5px 18px; }
+
+.mistakes-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.6;
+}
+.mistakes-text.danger { color: var(--danger); font-weight: 600; }
+</style>
+</head>
+<body>
+    <div class="app">
+
+        <h1>Tashoku</h1>
+        <p class="subtitle-rule" id="subtitleRule">No repeated colour in any row, column, 3×3 box, or diagonal.</p>
+
+        <!-- Pencil marks -->
+        <div class="controls">
+            <div class="card" id="pencilCard">
+                <span class="card-label">Pencil mode</span>
+                <button class="toggle-btn" id="pencilToggle" aria-pressed="false">
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                    <span id="pencilLabel">OFF</span>
+                </button>
+            </div>
+            <div class="card">
+                <span class="card-label">Auto candidates</span>
+                <button class="toggle-btn" id="autoToggle" aria-pressed="false">
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                    <span id="autoLabel">OFF</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Difficulty -->
+        <div class="diff-row">
+            <button class="diff-btn" id="btnHard">Hard</button>
+            <button class="diff-btn active" id="btnMedium">Medium</button>
+            <button class="diff-btn" id="btnEasy">Easy</button>
+        </div>
+        <!-- Actions -->
+        <div class="actions">
+            <button class="btn btn-primary" id="newBtn">New puzzle</button>
+            <button class="btn btn-ghost" id="hintBtn">Hint</button>
+        </div>
+        <!-- Board -->
+        <div class="board-wrap" id="boardWrap">
+            <svg class="diag-svg" id="boxSvg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+            <svg class="diag-svg" id="diagSvg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <line x1="1.5" y1="1.5" x2="98.5" y2="98.5" />
+                <line x1="98.5" y1="1.5" x2="1.5" y2="98.5" />
+            </svg>
+            <div class="grid" id="grid"></div>
+        </div>
+
+        <!-- Palette -->
+        <div class="palette-wrap">
+            <div class="palette-row" id="palette"></div>
+            <span class="palette-hint">Pick a colour · tap a cell to place it</span>
+        </div>
+
+        <!-- Status -->
+        <div class="status-area">
+            <span class="badge" id="badge"></span>
+            <p class="status-text" id="statusText"></p>
+            <p class="mistakes-text" id="mistakesText"></p>
+        </div>
+
+
+        <!-- Device-dependent features: results sharing + install prompt -->
+        <div class="actions" id="deviceActions" style="display:none;">
+            <button class="btn btn-primary" id="shareBtn" disabled>Share Results<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
+            <button class="btn btn-ghost" id="installBtn" style="display:none;">Install app</button>
+        </div>
+        <p class="status-text" id="shareToast" style="display:none;">Copied to clipboard!</p>
+
+    </div>
+<script>
+/* ── Config ──────────────────────────────────────────────── */
+
+// CSS variable names and display letters for each of the 9 possible colours
+const COLOR_CSS    = ['--c0','--c1','--c2','--c3','--c4','--c5','--c6','--c7','--c8'];
+const COLOR_LETTER = ['R','G','B','Y','P','T','O','K','L'];
+const COLOR_NAME   = ['Red','Green','Blue','Yellow','Purple','Teal','Orange','Pink','Lime'];
+
+// Returns true for colour indices that need dark (near-black) text on their fill
+function darkText(k) { return k === 3 || k === 5 || k === 6 || k === 8; }
+
+function makeConfig(N) {
+  return { N:9, boxRows:3, boxCols:3 };
+}
+
+// Lazy DOM cache — call cacheDOM() after the document is parsed
+const DOM = {};
+function cacheDOM() {
+  DOM.grid = document.getElementById('grid');
+  DOM.boxSvg = document.getElementById('boxSvg');
+  DOM.palette = document.getElementById('palette');
+  DOM.badge = document.getElementById('badge');
+  DOM.statusText = document.getElementById('statusText');
+  DOM.mistakesText = document.getElementById('mistakesText');
+  DOM.hintBtn = document.getElementById('hintBtn');
+  DOM.pencilToggle = document.getElementById('pencilToggle');
+  DOM.pencilLabel = document.getElementById('pencilLabel');
+  DOM.autoToggle = document.getElementById('autoToggle');
+  DOM.autoLabel = document.getElementById('autoLabel');
+  DOM.pencilCard = document.getElementById('pencilCard');
+  DOM.subtitleRule = document.getElementById('subtitleRule');
+  DOM.shareBtn = document.getElementById('shareBtn');
+  DOM.installBtn = document.getElementById('installBtn');
+  DOM.deviceActions = document.getElementById('deviceActions');
+  DOM.btnHard = document.getElementById('btnHard');
+  DOM.btnMedium = document.getElementById('btnMedium');
+  DOM.btnEasy = document.getElementById('btnEasy');
+  DOM.newBtn = document.getElementById('newBtn');
+}
+
+/* ── Solver ──────────────────────────────────────────────── */
+
+function boxId(cfg, r, c) {
+  return Math.floor(r/cfg.boxRows) * (cfg.N/cfg.boxCols) + Math.floor(c/cfg.boxCols);
+}
+
+function makeState(cfg) {
+  return {
+    grid:  new Array(cfg.N*cfg.N).fill(-1),
+    rowU:  new Array(cfg.N).fill(0),
+    colU:  new Array(cfg.N).fill(0),
+    boxU:  new Array((cfg.N/cfg.boxRows)*(cfg.N/cfg.boxCols)).fill(0),
+    diagU: [0, 0],
+  };
+}
+
+function candMask(cfg, st, r, c, diag) {
+  let used = st.rowU[r] | st.colU[c] | st.boxU[boxId(cfg,r,c)];
+  if (diag) {
+    if (r === c)         used |= st.diagU[0];
+    if (r+c === cfg.N-1) used |= st.diagU[1];
+  }
+  return ((1 << cfg.N) - 1) & ~used;
+}
+
+function doPlace(cfg, st, r, c, v, diag) {
+  const b = 1 << v;
+  st.grid[r*cfg.N+c] = v;
+  st.rowU[r] |= b; st.colU[c] |= b; st.boxU[boxId(cfg,r,c)] |= b;
+  if (diag) {
+    if (r === c)         st.diagU[0] |= b;
+    if (r+c === cfg.N-1) st.diagU[1] |= b;
+  }
+}
+
+function doRemove(cfg, st, r, c, v, diag) {
+  const b = ~(1 << v);
+  st.grid[r*cfg.N+c] = -1;
+  st.rowU[r] &= b; st.colU[c] &= b; st.boxU[boxId(cfg,r,c)] &= b;
+  if (diag) {
+    if (r === c)         st.diagU[0] &= b;
+    if (r+c === cfg.N-1) st.diagU[1] &= b;
+  }
+}
+
+function pop(x) { let n=0; while(x){n+=x&1;x>>>=1;} return n; }
+
+function shuffle(a) {
+  const b = a.slice();
+  for (let i=b.length-1; i>0; i--) {
+    const j = 0|Math.random()*(i+1);
+    [b[i],b[j]] = [b[j],b[i]];
+  }
+  return b;
+}
+
+function mrv(cfg, st, emp, diag) {
+  let bi=-1, bc=0, bn=99;
+  for (const idx of emp) {
+    const r=0|(idx/cfg.N), c=idx%cfg.N;
+    const cm = candMask(cfg,st,r,c,diag);
+    const cn = pop(cm);
+    if (cn < bn) { bn=cn; bi=idx; bc=cm; if (cn<=1) break; }
+  }
+  return { idx:bi, cands:bc, cnt:bn };
+}
+
+function generateSolution(cfg, diag) {
+  const st = makeState(cfg);
+  const emp = new Set([...Array(cfg.N*cfg.N).keys()]);
+  function bt() {
+    if (!emp.size) return true;
+    const {idx,cands,cnt} = mrv(cfg,st,emp,diag);
+    if (!cnt) return false;
+    const r=0|(idx/cfg.N), c=idx%cfg.N;
+    emp.delete(idx);
+    for (const v of shuffle([...Array(cfg.N).keys()].filter(i=>(cands>>i)&1))) {
+      doPlace(cfg,st,r,c,v,diag);
+      if (bt()) return true;
+      doRemove(cfg,st,r,c,v,diag);
+    }
+    emp.add(idx); return false;
+  }
+  bt();
+  return st.grid.slice();
+}
+
+function countSolutions(cfg, partial, diag, limit) {
+  const st = makeState(cfg);
+  const emp = new Set();
+  for (let i=0; i<cfg.N*cfg.N; i++) {
+    if (partial[i] !== -1) {
+      const r=0|(i/cfg.N), c=i%cfg.N;
+      doPlace(cfg,st,r,c,partial[i],diag);
+    } else emp.add(i);
+  }
+  let count = 0;
+  function bt() {
+    if (count >= limit) return;
+    if (!emp.size) { count++; return; }
+    const {idx,cands,cnt} = mrv(cfg,st,emp,diag);
+    if (!cnt) return;
+    const r=0|(idx/cfg.N), c=idx%cfg.N;
+    emp.delete(idx);
+    for (let v=0; v<cfg.N; v++) {
+      if (!((cands>>v)&1)) continue;
+      doPlace(cfg,st,r,c,v,diag);
+      bt();
+      doRemove(cfg,st,r,c,v,diag);
+      if (count >= limit) break;
+    }
+    emp.add(idx);
+  }
+  bt();
+  return count;
+}
+
+/* ── Puzzle generator: reduction method ───────────────────────
+   Starts with every cell as a given, then removes cells one by one
+   in random order, keeping a removal only when the puzzle remains
+   uniquely solvable.  Stops early once the target clue count is
+   reached, so difficulty is controlled without repeated attempts.
+   Worst case: N² countSolutions calls (≤81 for 9×9) vs up to 2400
+   for the old random-subset approach.  ─────────────────────────── */
+function generatePuzzle(cfg, targetClues, diag) {
+  const solution = generateSolution(cfg, diag);
+  const order    = shuffle([...Array(cfg.N*cfg.N).keys()]);
+  const given    = new Set(order);   // start: every cell is a given
+
+  for (const i of order) {
+    if (given.size <= targetClues) break;   // reached desired difficulty
+    given.delete(i);
+    const partial = new Array(cfg.N*cfg.N).fill(-1);
+    for (const j of given) partial[j] = solution[j];
+    if (countSolutions(cfg, partial, diag, 2) !== 1) {
+      given.add(i);   // removing i breaks uniqueness — restore it
+    }
+  }
+
+  return { solution, given: [...given] };
+}
+
+function nakedSingleSolvable(cfg, partial, diag) {
+  // Dead code — kept only as reference; not called anywhere.
+}
+
+/* ── Precomputed conflict groups and cached cell NodeList ─────
+   Groups (rows / columns / boxes / diagonals) never change between
+   puzzles, so we build them once in buildGrid() and reuse them.
+   cachedCells avoids a querySelectorAll walk on every render.   ── */
+let cachedGroups = null;
+let cachedCells  = null;
+
+function buildConflictGroups(cfg, diag) {
+  const groups = [];
+  for (let r=0; r<cfg.N; r++)
+    groups.push(Array.from({length:cfg.N}, (_,c) => r*cfg.N+c));
+  for (let c=0; c<cfg.N; c++)
+    groups.push(Array.from({length:cfg.N}, (_,r) => r*cfg.N+c));
+  const nBR=cfg.N/cfg.boxRows, nBC=cfg.N/cfg.boxCols;
+  for (let br=0; br<nBR; br++) for (let bc=0; bc<nBC; bc++) {
+    const cells=[];
+    for (let r=br*cfg.boxRows; r<(br+1)*cfg.boxRows; r++)
+      for (let c=bc*cfg.boxCols; c<(bc+1)*cfg.boxCols; c++)
+        cells.push(r*cfg.N+c);
+    groups.push(cells);
+  }
+  if (diag) {
+    groups.push(Array.from({length:cfg.N}, (_,i) => i*cfg.N+i));
+    groups.push(Array.from({length:cfg.N}, (_,i) => i*cfg.N+(cfg.N-1-i)));
+  }
+  return groups;
+}
+
+function getConflicts(cfg, grid) {
+  const conflicts = new Set();
+  for (const grp of cachedGroups) {
+    const seen = {};
+    for (const idx of grp) {
+      const v = grid[idx]; if (v===-1) continue;
+      if (seen[v] !== undefined) { conflicts.add(seen[v]); conflicts.add(idx); }
+      else seen[v] = idx;
+    }
+  }
+  return conflicts;
+}
+
+/* ── Cells sharing a row, column, box, or (if on) diagonal with idx ──
+   Used to know which cells' pencil marks need updating when a colour
+   is placed at idx. ─────────────────────────────────────────────── */
+function getRelatedIndices(cfg, idx, diag) {
+  const r = Math.floor(idx / cfg.N), c = idx % cfg.N;
+  const related = new Set();
+  for (let cc=0; cc<cfg.N; cc++) if (cc!==c) related.add(r*cfg.N+cc);
+  for (let rr=0; rr<cfg.N; rr++) if (rr!==r) related.add(rr*cfg.N+c);
+  const br = Math.floor(r/cfg.boxRows)*cfg.boxRows, bc = Math.floor(c/cfg.boxCols)*cfg.boxCols;
+  for (let rr=br; rr<br+cfg.boxRows; rr++)
+    for (let cc=bc; cc<bc+cfg.boxCols; cc++) {
+      const j = rr*cfg.N+cc;
+      if (j!==idx) related.add(j);
+    }
+  if (diag) {
+    if (r===c) for (let i=0;i<cfg.N;i++) if (i!==r) related.add(i*cfg.N+i);
+    if (r+c===cfg.N-1) for (let i=0;i<cfg.N;i++) if (i!==r) related.add(i*cfg.N+(cfg.N-1-i));
+  }
+  return related;
+}
+
+/* ── Auto-candidates: legal colours for every empty cell, live ──────
+   Reuses the same state machinery as the solver (makeState/doPlace/
+   candMask) — builds one shared state from every currently-filled
+   cell, then queries it per empty cell. Returns an array of length
+   N*N: null for filled cells, a candidate bitmask for empty ones. ── */
+function computeLiveCandidates(cfg, grid, diag) {
+  const st = makeState(cfg);
+  for (let i=0; i<cfg.N*cfg.N; i++) {
+    if (grid[i] !== -1) {
+      const r = Math.floor(i/cfg.N), c = i % cfg.N;
+      doPlace(cfg, st, r, c, grid[i], diag);
+    }
+  }
+  const result = new Array(cfg.N*cfg.N).fill(null);
+  for (let i=0; i<cfg.N*cfg.N; i++) {
+    if (grid[i] === -1) {
+      const r = Math.floor(i/cfg.N), c = i % cfg.N;
+      result[i] = candMask(cfg, st, r, c, diag);
+    }
+  }
+  return result;
+}
+
+/* ── Difficulty presets for 9×9 with diagonal constraint ── */
+function clueCount(cfg, diag, diff) {
+  return { hard:22, medium:30, easy:40 }[diff];
+}
+
+/* ── App state ────────────────────────────────────────────── */
+const app = {
+  N: 9, cfg: makeConfig(9), diag: true, diff: 'medium',
+  solution: null, givenSet: new Set(), hintSet: new Set(),
+  playerGrid: [], selectedTool: 0,
+  candidates: [],          // per-cell Set<colourIndex> of manual pencil marks (null = none/filled)
+  pencilMode: false,       // false = placing colours, true = toggling candidate marks
+  autoCandidates: false,   // true = show live-computed legal candidates instead of manual marks
+  hintsUsed: 0, maxHints: 3,
+  errorCount: 0, maxErrors: 3, failed: false,
+  shareBlob: null,
+};
+
+/* ── Build grid DOM (box boundaries match the outer frame exactly) ── */
+function buildGrid() {
+  const gridEl = document.getElementById('grid');
+  gridEl.innerHTML = '';
+  const { cfg } = app;
+  gridEl.style.gridTemplateColumns = `repeat(${cfg.N}, 1fr)`;
+  gridEl.style.gridTemplateRows    = `repeat(${cfg.N}, 1fr)`;
+  gridEl.style.gap = '0';
+
+  for (let i=0; i<cfg.N*cfg.N; i++) {
+    const r = 0|(i/cfg.N), c = i % cfg.N;
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.tabIndex = 0;
+    cell.dataset.idx = i;
+
+    // Box-boundary lines use the exact same weight and colour as the
+    // outer frame (3px solid var(--outer-line)); ordinary cell-to-cell
+    // lines stay thin and light.
+    const boxRight  = (c+1) % cfg.boxCols === 0 && c < cfg.N-1;
+    const boxBottom = (r+1) % cfg.boxRows === 0 && r < cfg.N-1;
+    cell.style.borderRight  = c < cfg.N-1
+      ? (boxRight  ? '3px solid var(--outer-line)' : '1px solid var(--cell-empty-border)')
+      : 'none';
+    cell.style.borderBottom = r < cfg.N-1
+      ? (boxBottom ? '3px solid var(--outer-line)' : '1px solid var(--cell-empty-border)')
+      : 'none';
+    cell.style.borderLeft = 'none';
+    cell.style.borderTop  = 'none';
+
+    cell.addEventListener('click', () => handleCellClick(i));
+    cell.addEventListener('keydown', e => {
+      if (e.key==='Enter'||e.key===' ') { e.preventDefault(); handleCellClick(i); }
+    });
+    gridEl.appendChild(cell);
+  }
+
+  // Box grouping is now shown via solid borders above, not an SVG overlay.
+  const boxSvg = document.getElementById('boxSvg');
+  if (boxSvg) boxSvg.innerHTML = '';
+
+  cachedGroups = buildConflictGroups(app.cfg, app.diag);
+  cachedCells  = [...gridEl.querySelectorAll('.cell')];
+}
+
+/* ── Build palette ────────────────────────────────────────── */
+function buildPalette() {
+  const el = document.getElementById('palette');
+  el.innerHTML = '';
+  for (let k=0; k<app.cfg.N; k++) {
+    const sw = document.createElement('button');
+    sw.className = 'swatch';
+    sw.style.background = `var(${COLOR_CSS[k]})`;
+    sw.style.color = darkText(k) ? '#1a1a1a' : '#ffffff';
+    sw.textContent = COLOR_LETTER[k];
+    sw.title = COLOR_NAME[k];
+    sw.setAttribute('aria-label', COLOR_NAME[k]);
+    sw.addEventListener('click', () => { app.selectedTool=k; updatePaletteSelection(); });
+    el.appendChild(sw);
+  }
+  const er = document.createElement('button');
+  er.className = 'swatch eraser';
+  er.textContent = '✕';
+  er.title = 'Erase';
+  er.setAttribute('aria-label', 'eraser');
+  er.addEventListener('click', () => { app.selectedTool=app.cfg.N; updatePaletteSelection(); });
+  el.appendChild(er);
+  updatePaletteSelection();
+}
+
+function updatePaletteSelection(g) {
+  if (!g) g = fullGrid();
+  const done = completedColours(g);
+
+  // If the currently selected colour just finished, silently switch to eraser
+  // so the next tap on a cell doesn't try to place a completed colour.
+  if (done.has(app.selectedTool)) app.selectedTool = app.cfg.N;
+
+  document.querySelectorAll('.swatch').forEach((sw, k) => {
+    const isDone = done.has(k);
+    sw.classList.toggle('active', k === app.selectedTool);
+    sw.classList.toggle('done', isDone);
+    sw.disabled = isDone;
+  });
+}
+
+/* ── Returns a Set of colour indices where all N placements are
+   correct (given cells + correct player placements). ─────────── */
+function completedColours(g) {
+  if (!app.solution) return new Set();
+  const counts = new Array(app.cfg.N).fill(0);
+  for (let i = 0; i < app.cfg.N * app.cfg.N; i++) {
+    if (g[i] === app.solution[i]) counts[g[i]]++;
+  }
+  const done = new Set();
+  for (let k = 0; k < app.cfg.N; k++) {
+    if (counts[k] === app.cfg.N) done.add(k);
+  }
+  return done;
+}
+
+/* ── Render cells ─────────────────────────────────────────── */
+function fullGrid() {
+  const g = app.playerGrid.slice();
+  for (let i=0; i<app.cfg.N*app.cfg.N; i++) {
+    if (app.givenSet.has(i)) g[i] = app.solution[i];
+  }
+  return g;
+}
+
+function render() {
+  const g = fullGrid();
+  const conflicts = getConflicts(app.cfg, g);
+
+  // Computed once per render (not per cell) since it shares one solver
+  // state across every empty cell — see computeLiveCandidates().
+  const liveCandidates = app.autoCandidates ? computeLiveCandidates(app.cfg, g, app.diag) : null;
+
+  cachedCells.forEach((cell, i) => {
+    cell.classList.remove('given');
+    cell.innerHTML = '';
+    cell.style.background = 'var(--cell-bg)';
+
+    const val = g[i];
+    if (val !== -1) {
+      const peg = document.createElement('div');
+      peg.className = 'peg';
+      peg.style.background = `var(${COLOR_CSS[val]})`;
+      peg.style.color = darkText(val) ? '#1a1a1a' : '#ffffff';
+      peg.textContent = COLOR_LETTER[val];
+
+      if (app.givenSet.has(i)) {
+        cell.classList.add('given');
+        peg.classList.add('given');
+      }
+      if (app.hintSet.has(i)) {
+        peg.classList.add('hint');
+      }
+      if (conflicts.has(i)) {
+        peg.classList.add('conflict');
+      }
+      cell.appendChild(peg);
+    } else {
+      const colourIndices = app.autoCandidates
+        ? bitmaskToList(liveCandidates[i], app.cfg.N)
+        : (app.candidates[i] ? [...app.candidates[i]].sort((a,b)=>a-b) : []);
+
+      if (colourIndices.length > 0) {
+        cell.appendChild(buildCandidatesGrid(colourIndices, app.cfg.N));
+      } else {
+        const dot = document.createElement('div');
+        dot.className = 'cell-empty-dot';
+        cell.appendChild(dot);
+      }
+    }
+  });
+
+  updateStatus(g, conflicts);
+  updatePaletteSelection(g);
+}
+
+function bitmaskToList(mask, numColors) {
+  const list = [];
+  for (let k=0; k<numColors; k++) if ((mask>>k)&1) list.push(k);
+  return list;
+}
+
+// 3 columns × 2 rows — same shape as the box itself — holding one slot
+// per possible colour, in the same R G B / Y P T order as the palette.
+function buildCandidatesGrid(activeColourIndices, numColors) {
+  const wrap = document.createElement('div');
+  wrap.className = 'candidates-grid';
+  const activeSet = new Set(activeColourIndices);
+  for (let k=0; k<numColors; k++) {
+    const slot = document.createElement('div');
+    slot.className = 'candidate-slot';
+    if (activeSet.has(k)) {
+      slot.classList.add('active');
+      slot.style.background = `var(${COLOR_CSS[k]})`;
+      slot.style.color = darkText(k) ? '#1a1a1a' : '#ffffff';
+      slot.textContent = COLOR_LETTER[k];
+    }
+    wrap.appendChild(slot);
+  }
+  return wrap;
+}
+
+function updateStatus(g, conflicts) {
+  const total  = app.cfg.N * app.cfg.N;
+  const filled = g.filter(v => v !== -1).length;
+  const solved = !app.failed && (filled === total && conflicts.size === 0);
+
+  const badgeEl     = document.getElementById('badge');
+  const statusEl    = document.getElementById('statusText');
+  const mistakesEl  = document.getElementById('mistakesText');
+  const hintBtn     = document.getElementById('hintBtn');
+  const hintsLeft   = app.maxHints - app.hintsUsed;
+
+  hintBtn.disabled = solved || app.failed || hintsLeft <= 0;
+  hintBtn.textContent = hintsLeft <= 0 ? 'No hints left' : `Hint (${hintsLeft} left)`;
+
+  if (app.failed) {
+    badgeEl.className = 'badge failed-badge';
+    badgeEl.textContent = '✗ Failed';
+    statusEl.className = 'status-text';
+    statusEl.textContent = 'Solution revealed';
+    mistakesEl.className = 'mistakes-text danger';
+    mistakesEl.textContent = `${app.errorCount}/${app.maxErrors} mistakes · Tap New puzzle to try again`;
+    onPuzzleStateChange(false, conflicts.size, true);
+    return;
+  }
+
+  if (solved) {
+    badgeEl.className = 'badge solved-badge';
+    badgeEl.textContent = '✓ Solved!';
+    statusEl.className = 'status-text';
+    statusEl.textContent =
+      `${app.cfg.N}×${app.cfg.N} · ${app.givenSet.size} clues`;
+    mistakesEl.className = 'mistakes-text';
+    mistakesEl.textContent = app.errorCount > 0 ? `${app.errorCount}/${app.maxErrors} mistakes` : '';
+    onPuzzleStateChange(true, conflicts.size, false);
+    return;
+  }
+
+  badgeEl.className = '';
+  badgeEl.textContent = '';
+
+  const parts = [
+    `${app.cfg.N}×${app.cfg.N}`,
+    `${app.givenSet.size} clues`,
+    app.diff,
+  ];
+  if (conflicts.size > 0) {
+    statusEl.className = 'status-text conflict-text';
+    parts.push(`${conflicts.size} conflict${conflicts.size>1?'s':''}`);
+  } else {
+    statusEl.className = 'status-text';
+  }
+  statusEl.textContent = parts.join(' · ');
+
+  mistakesEl.className = app.errorCount > 0 ? 'mistakes-text danger' : 'mistakes-text';
+  mistakesEl.textContent = `${app.errorCount}/${app.maxErrors} mistakes`;
+  onPuzzleStateChange(false, conflicts.size, false);
+}
+
+/* ── Subtitle ─────────────────────────────────────────────── */
+function updateSubtitle() {
+  document.getElementById('subtitleRule').textContent =
+    'No repeated colour in any row, column, 3×3 box, or diagonal.';
+}
+
+/* ── Place a colour at a cell and run the elimination side-effect ──
+   Shared by pen-mode clicks and the Hint button, so both behave
+   identically: the cell gets the colour, its own candidate marks are
+   cleared, and that colour is stripped from every related cell's
+   manual pencil marks (it's now provably wrong there). ──────────── */
+function placeColor(i, color) {
+  app.playerGrid[i] = color;
+  app.candidates[i] = null;
+  for (const j of getRelatedIndices(app.cfg, i, app.diag)) {
+    if (app.candidates[j] && app.candidates[j].has(color)) {
+      const set = new Set(app.candidates[j]);
+      set.delete(color);
+      app.candidates[j] = set.size ? set : null;
+    }
+  }
+}
+
+/* ── Interaction ──────────────────────────────────────────── */
+function handleCellClick(i) {
+  if (app.failed) return;
+  if (app.givenSet.has(i) || app.hintSet.has(i)) return;
+
+  const eraserSelected = app.selectedTool === app.cfg.N;
+  const hasPeg = app.playerGrid[i] !== -1;
+  const sameColourAsPeg = hasPeg && app.playerGrid[i] === app.selectedTool;
+
+  // Removing a peg should never depend on which mode you're in. The
+  // eraser always removes it, and clicking a peg again with its own
+  // colour already selected is a quick "toggle off" shortcut that does
+  // the same thing — both bypass pencil mode entirely.
+  if (hasPeg && (eraserSelected || sameColourAsPeg)) {
+    app.playerGrid[i] = -1;
+    render();
+    return;
+  }
+
+  const isPlacingMode = !app.pencilMode || app.autoCandidates;
+
+  if (!isPlacingMode) {
+    // Pencil mode: marking candidates only makes sense on empty cells.
+    if (app.playerGrid[i] !== -1) return;
+    if (eraserSelected) {
+      // Eraser on an already-empty cell clears all marks in it.
+      app.candidates[i] = null;
+    } else {
+      const set = app.candidates[i] ? new Set(app.candidates[i]) : new Set();
+      if (set.has(app.selectedTool)) set.delete(app.selectedTool);
+      else set.add(app.selectedTool);
+      app.candidates[i] = set.size ? set : null;
+    }
+    render();
+    return;
+  }
+
+  // Pen mode: place a colour, or erase an already-empty cell (no-op).
+  if (eraserSelected) {
+    app.playerGrid[i] = -1;
+  } else {
+    placeColor(i, app.selectedTool);
+    if (app.selectedTool !== app.solution[i]) {
+      app.errorCount++;
+      if (app.errorCount >= app.maxErrors) triggerFail();
+    }
+  }
+  render();
+}
+
+/* ── Fail: lock the board and reveal the solution, Wordle-style ──── */
+function triggerFail() {
+  app.failed = true;
+  for (let i=0; i<app.cfg.N*app.cfg.N; i++) {
+    if (!app.givenSet.has(i)) app.playerGrid[i] = app.solution[i];
+  }
+}
+
+/* ── Hint: reveal one correct cell rather than the whole board ──
+   Prefers an empty cell; if the board is full but has mistakes, fixes
+   one wrong cell instead. No-ops if the puzzle is already solved. ── */
+function giveHint() {
+  if (app.failed) return;
+  if (app.hintsUsed >= app.maxHints) return;
+  const empties = [];
+  const wrong = [];
+  for (let i=0; i<app.cfg.N*app.cfg.N; i++) {
+    if (app.givenSet.has(i) || app.hintSet.has(i)) continue;
+    if (app.playerGrid[i] === -1) empties.push(i);
+    else if (app.playerGrid[i] !== app.solution[i]) wrong.push(i);
+  }
+  const pool = empties.length ? empties : wrong;
+  if (!pool.length) return; // nothing left to hint — puzzle is solved
+
+  const i = pool[Math.floor(Math.random() * pool.length)];
+  placeColor(i, app.solution[i]);
+  app.hintSet.add(i);
+  app.hintsUsed++;
+  render();
+}
+
+function newPuzzle() {
+  const count = clueCount(app.cfg, app.diag, app.diff);
+  const { solution, given } = generatePuzzle(app.cfg, count, app.diag);
+  app.solution  = solution;
+  app.givenSet  = new Set(given);
+  app.hintSet   = new Set();
+  app.playerGrid = new Array(app.cfg.N*app.cfg.N).fill(-1);
+  app.candidates = new Array(app.cfg.N*app.cfg.N).fill(null);
+  app.hintsUsed = 0;
+  app.errorCount = 0;
+  app.failed = false;
+  app.shareBlob = null;
+  render();
+}
+
+function setDiff(diff) {
+  app.diff = diff;
+  ['hard','medium','easy'].forEach(d => {
+    document.getElementById('btn'+d[0].toUpperCase()+d.slice(1))
+      .classList.toggle('active', d===diff);
+  });
+  newPuzzle();
+}
+
+/* ── Pencil mode: toggling a candidate mark vs placing a colour ──── */
+function setPencilMode(on) {
+  if (app.autoCandidates) return; // disabled while auto candidates is on
+  app.pencilMode = on;
+  const btn = document.getElementById('pencilToggle');
+  btn.classList.toggle('on', on);
+  btn.setAttribute('aria-pressed', on);
+  document.getElementById('pencilLabel').textContent = on ? 'ON' : 'OFF';
+}
+
+/* ── Auto candidates: live-computed legal colours per empty cell ──
+   Turning this on forces pencil mode off and disables its toggle —
+   there's nothing to manually mark once everything is auto-derived. */
+function setAutoCandidates(on) {
+  app.autoCandidates = on;
+  const btn = document.getElementById('autoToggle');
+  btn.classList.toggle('on', on);
+  btn.setAttribute('aria-pressed', on);
+  document.getElementById('autoLabel').textContent = on ? 'ON' : 'OFF';
+
+  const pencilCard = document.getElementById('pencilCard');
+  const pencilBtn = document.getElementById('pencilToggle');
+  if (on) {
+    setPencilModeForced(false);
+    pencilCard.style.opacity = '0.5';
+    pencilBtn.style.pointerEvents = 'none';
+  } else {
+    pencilCard.style.opacity = '1';
+    pencilBtn.style.pointerEvents = 'auto';
+  }
+  render();
+}
+
+// Internal helper: set pencil mode without the auto-candidates guard,
+// used only by setAutoCandidates() to force it off.
+function setPencilModeForced(on) {
+  app.pencilMode = on;
+  const btn = document.getElementById('pencilToggle');
+  btn.classList.toggle('on', on);
+  btn.setAttribute('aria-pressed', on);
+  document.getElementById('pencilLabel').textContent = on ? 'ON' : 'OFF';
+}
+
+/* ════════════════════════════════════════════════════════════
+   Share result
+   ════════════════════════════════════════════════════════════ */
+
+function buildShareText() {
+  const diffLabel   = app.diff[0].toUpperCase() + app.diff.slice(1);
+  const resultLabel = app.failed ? 'Unsolved' : 'Solved';
+  const parts = ['Tashoku – ' + resultLabel + ' ' + diffLabel];
+  if (app.hintsUsed > 0) parts.push(app.hintsUsed + '/' + app.maxHints + ' hints used');
+  if (app.errorCount > 0) parts.push(app.errorCount + '/' + app.maxErrors + ' mistakes');
+  return parts.join('\n');
+}
+
+
+
+async function shareResult() {
+  const text = buildShareText();
+  const url  = location.href;
+
+  // Share text + url only; do not create or attach an image snapshot
+  if (navigator.share) {
+    try {
+      await navigator.share({title:'Tashoku', text, url});
+      return;
+    } catch (err) { if (err && err.name === 'AbortError') return; }
+  }
+
+  // Fallback: copy text to clipboard or show alert
+  fallbackShare(text + '\n' + url);
+}
+
+function fallbackShare(text) {
+  const toast = document.getElementById('shareToast');
+  const showToast = (msg) => {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 2200);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text)
+      .then(() => showToast('Copied to clipboard!'))
+      .catch(() => alert(text));
+  } else {
+    alert(text);
+  }
+}
+
+/* ── PWA state ─────────────────────────────────────────────── */
+let _wasSolved = false;
+let _wasFailed = false;
+let _prevConflictCount = 0;
+
+// Called from updateStatus() every render. Handles haptics + the
+// Share button's visibility — the one bit of UI that only makes sense
+// once there's a result worth sharing.
+function onPuzzleStateChange(solved, conflictCount, failed) {
+  const shareBtn = document.getElementById('shareBtn');
+  const gameEnded = solved || failed;
+
+  if ('vibrate' in navigator) {
+    if (solved && !_wasSolved) {
+      navigator.vibrate([35, 50, 35, 50, 90]);
+    } else if (failed && !_wasFailed) {
+      navigator.vibrate([60, 60, 60, 60, 60]);
+    } else if (!solved && !failed && conflictCount > _prevConflictCount) {
+      navigator.vibrate(35);
+    }
+  }
+
+    if (shareBtn) {
+    const wasEnded = _wasSolved || _wasFailed;
+    // Keep the button visible; enable/disable it based on game end
+    shareBtn.disabled = !gameEnded;
+    // Pre-generate image and focus button the first time the game ends
+    if (gameEnded && !wasEnded) {
+      setTimeout(() => { if (shareBtn) shareBtn.focus(); }, 150);
+    }
+  }
+
+  _wasSolved = solved;
+  _wasFailed = failed;
+  _prevConflictCount = conflictCount;
+  updateDeviceActionsVisibility();
+}
+
+// Install prompt: Chrome/Edge/Android fire beforeinstallprompt; we stash
+// the event and reveal our own button rather than relying on the browser's
+// default UI, so it sits next to Share. iOS Safari never fires this event
+// (there's no programmatic install API there) — Add to Home Screen is a
+// manual step from the iOS share sheet, so we just leave the button hidden.
+let deferredInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const btn = document.getElementById('installBtn');
+  if (btn) btn.style.display = 'block';
+  updateDeviceActionsVisibility();
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  const btn = document.getElementById('installBtn');
+  if (btn) btn.style.display = 'none';
+  updateDeviceActionsVisibility();
+});
+
+function updateDeviceActionsVisibility() {
+  const wrap = DOM.deviceActions || document.getElementById('deviceActions');
+  if (!wrap) return;
+  const sharePresent = !!(DOM.shareBtn || document.getElementById('shareBtn'));
+  const installVisible = DOM.installBtn ? DOM.installBtn.style.display !== 'none' : (document.getElementById('installBtn') && document.getElementById('installBtn').style.display !== 'none');
+  wrap.style.display = (sharePresent || installVisible) ? 'flex' : 'none';
+}
+
+// Service worker registration. Requires HTTPS or localhost — silently
+// no-ops (via the feature check) when opened directly as a file://, so
+// this is safe to leave in even before you've deployed anywhere.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch((err) => {
+      console.warn('Service worker registration failed:', err);
+    });
+  });
+}
+
+/* ── Wire controls ────────────────────────────────────────── */
+// Cache DOM now the document is parsed
+cacheDOM();
+if (DOM.pencilToggle) DOM.pencilToggle.addEventListener('click', () => setPencilMode(!app.pencilMode));
+if (DOM.autoToggle) DOM.autoToggle.addEventListener('click', () => setAutoCandidates(!app.autoCandidates));
+if (DOM.btnHard) DOM.btnHard.addEventListener('click', () => setDiff('hard'));
+if (DOM.btnMedium) DOM.btnMedium.addEventListener('click', () => setDiff('medium'));
+if (DOM.btnEasy) DOM.btnEasy.addEventListener('click', () => setDiff('easy'));
+if (DOM.newBtn) DOM.newBtn.addEventListener('click', newPuzzle);
+if (DOM.hintBtn) DOM.hintBtn.addEventListener('click', giveHint);
+if (DOM.shareBtn) DOM.shareBtn.addEventListener('click', shareResult);
+if (DOM.installBtn) DOM.installBtn.addEventListener('click', async () => {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  if (DOM.installBtn) DOM.installBtn.style.display = 'none';
+  updateDeviceActionsVisibility();
+});
+
+/* ── Init ─────────────────────────────────────────────────── */
+buildGrid();
+buildPalette();
+updateSubtitle();
+newPuzzle();
+</script>
+</body>
+</html>
