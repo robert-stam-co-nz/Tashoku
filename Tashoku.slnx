@@ -1,4 +1,4 @@
 <Solution>
-  <Project Path="../Tashoku.UnitTests/Tashoku.UnitTests.csproj" Id="34600ed9-0949-457c-ba47-8b2af75af1d8" />
+  <Project Path="../Tashoku.UnitTests/Tashoku.UnitTests.csproj" />
   <Project Path="Tashoku.csproj" />
 </Solution>
