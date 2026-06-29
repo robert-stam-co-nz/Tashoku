@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>Tashoku</title>
-
+<base href="/Tashoku/" />
 <!-- PWA -->
 <link rel="manifest" href="manifest.json"/>
 <meta name="theme-color" content="#4F46E5"/>
@@ -285,13 +285,13 @@ h1 {
 
 /* Peg — sized for 9×9 cells (~48px each) */
 .peg {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   box-shadow: 0 2px 5px rgba(0,0,0,0.18);
   flex-shrink: 0;
@@ -314,7 +314,7 @@ h1 {
 .cell-empty-dot {
   width: 20%;
   height: 20%;
-  border-radius: 50%;
+  border-radius: 2px;
   background: var(--cell-empty-border);
   opacity: 0.5;
 }
@@ -364,7 +364,7 @@ h1 {
 .swatch {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: 7px;
   border: 3px solid transparent;
   cursor: pointer;
   display: flex;
@@ -414,7 +414,7 @@ h1 {
   justify-content: center;
   font-size: 20px;
   font-weight: 900;
-  border-radius: 50%;
+  border-radius: 7px;
   background: rgba(0,0,0,0.22);
   color: rgba(255,255,255,0.92);
   pointer-events: none;
@@ -1290,12 +1290,19 @@ function setPencilModeForced(on) {
    ════════════════════════════════════════════════════════════ */
 
 function buildShareText() {
-  const diffLabel   = app.diff[0].toUpperCase() + app.diff.slice(1);
-  const resultLabel = app.failed ? 'Unsolved' : 'Solved';
-  const parts = ['Tashoku – ' + resultLabel + ' ' + diffLabel];
-  if (app.hintsUsed > 0) parts.push(app.hintsUsed + '/' + app.maxHints + ' hints used');
-  if (app.errorCount > 0) parts.push(app.errorCount + '/' + app.maxErrors + ' mistakes');
-  return parts.join('\n');
+  const diffLabel = app.diff[0].toUpperCase() + app.diff.slice(1);
+
+  function gauge(used, max, filledEmoji) {
+    return '⬜️'.repeat(max - used) + filledEmoji.repeat(used);
+  }
+
+  const lines = [
+    'Tashoku – ' + diffLabel,
+    '💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
+    '❌ ' + gauge(app.errorCount, app.maxErrors, '🟥'),
+  ];
+
+  return lines.join('\n');
 }
 
 
