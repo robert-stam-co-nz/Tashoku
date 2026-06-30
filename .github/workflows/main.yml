@@ -15,15 +15,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
-      - uses: actions/setup-dotnet@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '8.0.x'
 
-      - run: dotnet publish -c Release -o release
+      - name: Restore dependencies
+        run: dotnet restore
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Publish Blazor app
+        run: dotnet publish -c Release -o release --no-build
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: release
 
@@ -36,5 +46,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - id: deployment
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
