@@ -45,7 +45,7 @@
   --warn:         #B45309;
   --warn-bg:      rgba(180,83,9,0.10);
 
-  /* Nine distinct peg colours */
+  /* Nine distinct peg colours 0 1*/
   --c0: #E53E3E;   /* Red     */
   --c1: #38A169;   /* Green   */
   --c2: #3182CE;   /* Blue    */
@@ -877,8 +877,8 @@ function buildGrid() {
   const gridEl = document.getElementById('grid');
   gridEl.innerHTML = '';
   const { cfg } = app;
-  gridEl.style.gridTemplateColumns = `repeat(${cfg.N}, 1fr)`;
-  gridEl.style.gridTemplateRows    = `repeat(${cfg.N}, 1fr)`;
+  gridEl.style.gridTemplateColumns = `repeat(${cfg.N}, minmax(0, 1fr))`;
+  gridEl.style.gridTemplateRows    = `repeat(${cfg.N}, minmax(0, 1fr))`;
   gridEl.style.gap = '0';
 
   for (let i=0; i<cfg.N*cfg.N; i++) {
