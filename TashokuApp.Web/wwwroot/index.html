@@ -1311,7 +1311,7 @@ function buildShareText() {
 
 
 async function shareResult() {
-  const text = buildShareText() + '\n' + location.href;
+  const text = buildShareText() /* + '\n' + location.href */;
 
   // Share as a single text block — passing url as a separate parameter
   // causes some Android messaging apps to split it into two messages.
