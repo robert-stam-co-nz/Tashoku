@@ -938,17 +938,17 @@
           "build/net6.0/xunit.runner.visualstudio.props": {}
         }
       },
-      "Tashoku/1.0.0": {
+      "TashokuApp.Web/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
         "dependencies": {
           "Microsoft.AspNetCore.Components.WebAssembly": "10.0.9"
         },
         "compile": {
-          "bin/placeholder/Tashoku.dll": {}
+          "bin/placeholder/TashokuApp.Web.dll": {}
         },
         "runtime": {
-          "bin/placeholder/Tashoku.dll": {}
+          "bin/placeholder/TashokuApp.Web.dll": {}
         }
       }
     }
@@ -2227,17 +2227,17 @@
         "xunit.runner.visualstudio.nuspec"
       ]
     },
-    "Tashoku/1.0.0": {
+    "TashokuApp.Web/1.0.0": {
       "type": "project",
-      "path": "../Tashoku/Tashoku.csproj",
-      "msbuildProject": "../Tashoku/Tashoku.csproj"
+      "path": "../TashokuApp.Web/TashokuApp.Web.csproj",
+      "msbuildProject": "../TashokuApp.Web/TashokuApp.Web.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net10.0": [
       "Microsoft.NET.Test.Sdk >= 18.7.0",
       "Moq >= 4.20.72",
-      "Tashoku >= 1.0.0",
+      "TashokuApp.Web >= 1.0.0",
       "xunit >= 2.8.0",
       "xunit.runner.visualstudio >= 2.8.0"
     ]
@@ -2249,11 +2249,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\rober\\source\\repos\\robert-stam-co-nz\\Tashoku\\Tashoku.UnitTests\\Tashoku.UnitTests.csproj",
-      "projectName": "Tashoku.UnitTests",
-      "projectPath": "C:\\Users\\rober\\source\\repos\\robert-stam-co-nz\\Tashoku\\Tashoku.UnitTests\\Tashoku.UnitTests.csproj",
+      "projectUniqueName": "C:\\Users\\rober\\source\\repos\\robert-stam-co-nz\\Tashoku\\TashokuApp.Tests\\TashokuApp.Tests.csproj",
+      "projectName": "TashokuApp.Tests",
+      "projectPath": "C:\\Users\\rober\\source\\repos\\robert-stam-co-nz\\Tashoku\\TashokuApp.Tests\\TashokuApp.Tests.csproj",
       "packagesPath": "C:\\Users\\rober\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\rober\\source\\repos\\robert-stam-co-nz\\Tashoku\\Tashoku.UnitTests\\obj\\",
+      "outputPath": "C:\\Users\\rober\\source\\repos\\robert-stam-co-nz\\Tashoku\\TashokuApp.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -2276,8 +2276,8 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
-            "C:\\Users\\rober\\source\\repos\\robert-stam-co-nz\\Tashoku\\Tashoku\\Tashoku.csproj": {
-              "projectPath": "C:\\Users\\rober\\source\\repos\\robert-stam-co-nz\\Tashoku\\Tashoku\\Tashoku.csproj"
+            "C:\\Users\\rober\\source\\repos\\robert-stam-co-nz\\Tashoku\\TashokuApp.Web\\TashokuApp.Web.csproj": {
+              "projectPath": "C:\\Users\\rober\\source\\repos\\robert-stam-co-nz\\Tashoku\\TashokuApp.Web\\TashokuApp.Web.csproj"
             }
           }
         }

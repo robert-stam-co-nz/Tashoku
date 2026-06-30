@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Tashoku\Tashoku.csproj" />
+    <ProjectReference Include="..\TashokuApp.Web\TashokuApp.Web.csproj" />
   </ItemGroup>
 
   </Project>

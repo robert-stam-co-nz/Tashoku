@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VugEZO2Pn7Q=",
+  "dgSpecHash": "KOKS7F4BVBk=",
   "success": true,
-  "projectFilePath": "C:\\Users\\rober\\source\\repos\\robert-stam-co-nz\\Tashoku\\Tashoku.UnitTests\\Tashoku.UnitTests.csproj",
+  "projectFilePath": "C:\\Users\\rober\\source\\repos\\robert-stam-co-nz\\Tashoku\\TashokuApp.Tests\\TashokuApp.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\rober\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\rober\\.nuget\\packages\\microsoft.aspnetcore.authorization\\10.0.9\\microsoft.aspnetcore.authorization.10.0.9.nupkg.sha512",
