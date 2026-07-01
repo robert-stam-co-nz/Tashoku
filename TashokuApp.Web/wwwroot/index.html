@@ -1344,19 +1344,18 @@
            ════════════════════════════════════════════════════════════ */
 
         function buildShareText() {
-            const diffLabel = app.diff[0].toUpperCase() + app.diff.slice(1);
+            const diffLabel = app.diff.toUpperCase() + app.diff.slice(1);
 
             function gauge(used, max, filledEmoji) {
                 return '⬜️'.repeat(max - used) + filledEmoji.repeat(used);
             }
 
-            // Prepend short text tags ('Score:', 'Hints:', 'Errors:', 'Link:') 
-            // to force standard left-alignment without triggering Messenger bugs.
+            // Keep this entirely focused on text and your gauges. 
+            // No URL strings are allowed here.
             const lines = [
                 'Tashoku – ' + diffLabel,
-                'Hints: 💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
-                'Errors: ❌ ' + gauge(app.errorCount, app.maxErrors, '🟥'),
-                'Link: ' + location.href
+                '💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
+                '❌ ' + gauge(app.errorCount, app.maxErrors, '🟥') + '.' // The dot acts as a structural anchor
             ];
 
             return lines.join('\n');
@@ -1367,17 +1366,22 @@
 
             if (navigator.share) {
                 try {
-                    // Pass text only. Including a dedicated 'url' property 
-                    // is what triggers Messenger to send two separate messages.
-                    await navigator.share({ text: text });
+                    // By separating the URL here and ensuring the text ends with a hard anchor (.),
+                    // Messenger will align your text left and generate its rich-link card perfectly.
+                    await navigator.share({
+                        text: text,
+                        url: location.href
+                    });
                     return;
                 } catch (err) {
                     if (err && err.name === 'AbortError') return;
                 }
             }
 
-            fallbackShare(text);
+            // For the clipboard fallback, we append the URL manually so they can copy/paste it
+            fallbackShare(text + '\n\n' + location.href);
         }
+
 
         function fallbackShare(text) {
             const toast = document.getElementById('shareToast');
