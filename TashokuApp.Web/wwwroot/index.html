@@ -1367,11 +1367,11 @@
             const ZWS = '\u200B';
 
             const lines = [
-                ZWS + 'Tashoku – ' + diffLabel,
-                ZWS + '💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
-                ZWS + statusIcon + ' ' + gauge(app.errorCount, app.maxErrors, filledSquare),
+                'Tashoku – ' + diffLabel,
+                'Hints:   ' + '💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
+                'Mistake: ' + statusIcon + ' ' + gauge(app.errorCount, app.maxErrors, filledSquare),
                 '', // Vertical space block
-                ZWS + location.href // Forces the text link into the message body
+                'Link: ' + location.href // Forces the text link into the message body
             ];
 
             return lines.join('\n');

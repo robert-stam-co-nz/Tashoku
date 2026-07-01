@@ -1,7 +1,7 @@
 // Bump this on every deploy that changes any cached file — old caches are
 // deleted automatically on activate, so this is the only thing you need
 // to touch to push an update to installed users.
-const CACHE_VERSION = 'v8.31';
+const CACHE_VERSION = 'v8.32';
 const CACHE_NAME = `tashoku-${CACHE_VERSION}`;
 
 const APP_SHELL = [
