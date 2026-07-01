@@ -1369,8 +1369,9 @@
             const lines = [
                 'Tashoku – ' + diffLabel,
                 '💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
-                statusIcon + ' ' + gauge(app.errorCount, app.maxErrors, filledSquare),'','',
-                ];
+                statusIcon + ' ' + gauge(app.errorCount, app.maxErrors, filledSquare),
+                ' 8.44'
+               ];
 
             return lines.join('\n');
         }
