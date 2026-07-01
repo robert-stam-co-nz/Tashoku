@@ -1303,7 +1303,7 @@ function buildShareText() {
       'Tashoku – ' + diffLabel,
     '💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
       '❌ ' + gauge(app.errorCount, app.maxErrors, '🟥')
-      //, '❌ ' + location.href.trim()
+     
   ];
 
   return lines.join('\n');
@@ -1318,7 +1318,7 @@ async function shareResult() {
   // causes some Android messaging apps to split it into two messages.
   if (navigator.share) {
     try {
-        await navigator.share({ title: 'Tashoku', text, url: location.href }); //title: 'Tashoku',
+        await navigator.share({ title: 'Tashoku', text }); 
       return;
     } catch (err) { if (err && err.name === 'AbortError') return; }
   }
