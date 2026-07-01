@@ -1344,12 +1344,17 @@
            ════════════════════════════════════════════════════════════ */
 
         function buildShareText() {
-            // Properly capitalises only the first character (e.g., 'medium' -> 'Medium')
             const diffLabel = app.diff.charAt(0).toUpperCase() + app.diff.slice(1).toLowerCase();
 
             function gauge(used, max, filledEmoji) {
-                // Keeps text layout safe from Messenger's right-shifting bug
-                return '-'.repeat(max - used) + filledEmoji.repeat(used);
+                const emptySymbol = '-';
+
+                // Create arrays of your elements
+                const empties = Array(max - used).fill(emptySymbol);
+                const filled = Array(used).fill(filledEmoji);
+
+                // Combine them and join with a text separator (·) to break up consecutive emojis
+                return [...empties, ...filled].join('·');
             }
 
             const statusIcon = app.errorCount < 3 ? '✅' : '❌';
