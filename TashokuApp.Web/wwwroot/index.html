@@ -1368,11 +1368,9 @@
 
             const lines = [
                 'Tashoku – ' + diffLabel,
-                'Hints:   ' + '💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
-                'Mistake: ' + statusIcon + ' ' + gauge(app.errorCount, app.maxErrors, filledSquare),
-                '', // Vertical space block
-                'Link: '// + location.href  Forces the text link into the message body
-            ];
+                '💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
+                statusIcon + ' ' + gauge(app.errorCount, app.maxErrors, filledSquare)
+                ];
 
             return lines.join('\n');
         }
