@@ -1300,10 +1300,10 @@ function buildShareText() {
   }
 
   const lines = [
-      '❌ ' + 'Tashoku – ' + diffLabel,
+      'Tashoku – ' + diffLabel,
     '💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
-      '❌ ' + gauge(app.errorCount, app.maxErrors, '🟥'),
-      '❌ ' + location.href.trim()
+      '❌ ' + gauge(app.errorCount, app.maxErrors, '🟥')
+      //, '❌ ' + location.href.trim()
   ];
 
   return lines.join('\n');
