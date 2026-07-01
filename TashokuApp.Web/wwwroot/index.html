@@ -1384,7 +1384,7 @@
                 try {
                     // Pass text ONLY. This guarantees the link is sent (inside the text)
                     // while the ZWS tokens keep your layout cleanly aligned to the left margin.
-                    await navigator.share({ text: text });
+                    await navigator.share({ text: text, url: location.href });
                     return;
                 } catch (err) {
                     if (err && err.name === 'AbortError') return;
