@@ -1346,41 +1346,38 @@
         function buildShareText() {
             const diffLabel = app.diff[0].toUpperCase() + app.diff.slice(1);
 
-            // Strict Left-to-Right Override tokens
-            const LRO = '\u202D'; // FORCES everything following to be Left-to-Right
-            const PDF = '\u202C'; // Closes the override block
-
             function gauge(used, max, filledEmoji) {
                 return '⬜️'.repeat(max - used) + filledEmoji.repeat(used);
             }
 
-            // Build the lines completely naked (no line-by-line LRM needed)
+            // Prepend short text tags ('Score:', 'Hints:', 'Errors:', 'Link:') 
+            // to force standard left-alignment without triggering Messenger bugs.
             const lines = [
                 'Tashoku – ' + diffLabel,
-                '💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
-                '❌ ' + gauge(app.errorCount, app.maxErrors, '🟥'),
-                location.href
+                'Hints: 💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
+                'Errors: ❌ ' + gauge(app.errorCount, app.maxErrors, '🟥'),
+                'Link: ' + location.href
             ];
 
-            // Join the lines, then wrap the ENTIRE block inside the LRO/PDF sandwich
-            return LRO + lines.join('\n') + PDF;
+            return lines.join('\n');
         }
-
-       
 
         async function shareResult() {
             const text = buildShareText();
 
             if (navigator.share) {
                 try {
-                    await navigator.share({ title: 'Tashoku', text });
+                    // Pass text only. Including a dedicated 'url' property 
+                    // is what triggers Messenger to send two separate messages.
+                    await navigator.share({ text: text });
                     return;
                 } catch (err) {
                     if (err && err.name === 'AbortError') return;
                 }
             }
-        }
 
+            fallbackShare(text);
+        }
 
         function fallbackShare(text) {
             const toast = document.getElementById('shareToast');
