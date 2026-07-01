@@ -614,6 +614,9 @@
             <button class="btn btn-primary" id="newBtn">New puzzle</button>
             <button class="btn btn-ghost" id="hintBtn">Hint</button>
         </div>
+        <div class="actions">
+            <button class="btn btn-ghost" id="inviteBtn">Invite a friend<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg></button>
+        </div>
         <!-- Board -->
         <div class="board-wrap" id="boardWrap">
             <svg class="diag-svg" id="boxSvg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
@@ -678,6 +681,7 @@
             DOM.pencilCard = document.getElementById('pencilCard');
             DOM.subtitleRule = document.getElementById('subtitleRule');
             DOM.shareBtn = document.getElementById('shareBtn');
+            DOM.inviteBtn = document.getElementById('inviteBtn');
             DOM.installBtn = document.getElementById('installBtn');
             DOM.deviceActions = document.getElementById('deviceActions');
             DOM.btnHard = document.getElementById('btnHard');
@@ -1368,7 +1372,7 @@
                 'Tashoku – ' + diffLabel,
                 '💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
                 statusIcon + ' ' + gauge(app.errorCount, app.maxErrors, filledSquare),
-                'v8.47'
+                'v8.48'
             ];
 
             return lines.join('\n');
@@ -1390,6 +1394,30 @@
             }
 
             fallbackShare(text);
+        }
+
+        // Separate from shareResult(): this shares the app link itself, so a
+        // friend can go play. No emoji gauge lines here, so there's no fragile
+        // layout to protect — a normal title+text+url share is fine.
+        const APP_URL = 'https://robert-stam-co-nz.github.io/Tashoku/';
+
+        async function shareApp() {
+            const shareData = {
+                title: 'Tashoku',
+                text: 'Tashoku — a colour-based 9×9 diagonal Sudoku puzzle. Give it a try:',
+                url: APP_URL
+            };
+
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                    return;
+                } catch (err) {
+                    if (err && err.name === 'AbortError') return;
+                }
+            }
+
+            fallbackShare(shareData.text + ' ' + APP_URL);
         }
 
 
@@ -1531,6 +1559,7 @@
         if (DOM.newBtn) DOM.newBtn.addEventListener('click', newPuzzle);
         if (DOM.hintBtn) DOM.hintBtn.addEventListener('click', giveHint);
         if (DOM.shareBtn) DOM.shareBtn.addEventListener('click', shareResult);
+        if (DOM.inviteBtn) DOM.inviteBtn.addEventListener('click', shareApp);
         if (DOM.installBtn) DOM.installBtn.addEventListener('click', async () => {
             if (!deferredInstallPrompt) return;
             deferredInstallPrompt.prompt();
