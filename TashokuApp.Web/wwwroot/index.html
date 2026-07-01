@@ -4,6 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Tashoku</title>
+    <meta name="description" content="A colour-based 9×9 diagonal Sudoku puzzle. Fill the grid so every row, column, box and diagonal has all nine colours." />
+    <meta property="og:title" content="Tashoku" />
+    <meta property="og:description" content="A colour-based 9×9 diagonal Sudoku puzzle. Fill the grid so every row, column, box and diagonal has all nine colours." />
+    <meta property="og:image" content="https://robert-stam-co-nz.github.io/Tashoku/icons/icon-512.png" />
+    <meta property="og:url" content="https://robert-stam-co-nz.github.io/Tashoku/" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Tashoku" />
+    <meta name="twitter:description" content="A colour-based 9×9 diagonal Sudoku puzzle. Fill the grid so every row, column, box and diagonal has all nine colours." />
+    <meta name="twitter:image" content="https://robert-stam-co-nz.github.io/Tashoku/icons/icon-512.png" />
     <base href="/Tashoku/" />
     <!-- PWA -->
     <link rel="manifest" href="manifest.json" />
@@ -1342,42 +1352,6 @@
         /* ════════════════════════════════════════════════════════════
            Share result
            ════════════════════════════════════════════════════════════ */
-        // function buildShareText() {
-        //     const diffLabel = app.diff.charAt(0).toUpperCase() + app.diff.slice(1).toLowerCase();
-
-        //     function gauge(used, max, filledEmoji) {
-        //         return '⬜️'.repeat(max - used) + filledEmoji.repeat(used);
-        //     }
-
-        //     // Choose the icon and gauge colour dynamically based on the error count
-        //     const statusIcon = app.errorCount < 3 ? '✅' : '❌';
-        //     const filledSquare = app.errorCount < 3 ? '🟩' : '🟥';
-
-        //     // Original multi-line layout restored with your hints gauge
-        //     const lines = [
-        //         'Tashoku – ' + diffLabel,
-        //         '💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
-        //         statusIcon + ' ' + gauge(app.errorCount, app.maxErrors, filledSquare)
-        //     ];
-
-        //     return lines.join('\n');
-        // }
-
-        // async function shareResult() {
-        //     const text = buildShareText();
-
-        //     if (navigator.share) {
-        //         try {
-        //             await navigator.share({ text: text });
-        //             return;
-        //         } catch (err) {
-        //             if (err && err.name === 'AbortError') return;
-        //         }
-        //     }
-
-        //     fallbackShare(text);
-        // }
-
         function buildShareText() {
             const diffLabel = app.diff.charAt(0).toUpperCase() + app.diff.slice(1).toLowerCase();
 
