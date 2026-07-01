@@ -1318,7 +1318,7 @@ async function shareResult() {
   // causes some Android messaging apps to split it into two messages.
   if (navigator.share) {
     try {
-        await navigator.share({ text }); //title: 'Tashoku',
+        await navigator.share({ title: 'Tashoku', text }); //title: 'Tashoku',
       return;
     } catch (err) { if (err && err.name === 'AbortError') return; }
   }
