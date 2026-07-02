@@ -581,15 +581,7 @@
     </style>
 </head>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZVNR3LVTDX"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-ZVNR3LVTDX');
-</script>
 
 <body>
     <div class="app">
@@ -661,6 +653,15 @@
         <p class="status-text" id="shareToast" style="display:none;">Copied to clipboard!</p>
 
     </div>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZVNR3LVTDX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-ZVNR3LVTDX');
+    </script>
     <script>
         /* ── Config ──────────────────────────────────────────────── */
 
@@ -1412,7 +1413,7 @@
             const lines = [
                 'Tashoku – ' + diffLabel,
                 '💡 ' + gauge(app.hintsUsed, app.maxHints, '🟨'),
-                statusIcon + ' ' + gauge(app.errorCount, app.maxErrors, filledSquare)              
+                statusIcon + ' ' + gauge(app.errorCount, app.maxErrors, filledSquare)
             ];
 
             return lines.join('\n');
