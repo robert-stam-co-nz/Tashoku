@@ -1061,13 +1061,37 @@
             return g;
         }
 
+        // Grid used for candidate calculation. Only givens and
+        // player entries that are actually correct contribute to
+        // the constraint state. Incorrect entries remain visible
+        // and highlighted, but do not suppress candidates elsewhere.
+        function candidateStateGrid() {
+            const g = new Array(app.cfg.N * app.cfg.N).fill(-1);
+
+            for (let i = 0; i < app.cfg.N * app.cfg.N; i++) {
+                if (app.givenSet.has(i)) {
+                    g[i] = app.solution[i];
+                } else if (
+                    app.playerGrid[i] !== -1 &&
+                    app.solution &&
+                    app.playerGrid[i] === app.solution[i]
+                ) {
+                    g[i] = app.playerGrid[i];
+                }
+            }
+
+            return g;
+        }
+
         function render() {
             const g = fullGrid();
             const conflicts = getConflicts(app.cfg, g);
 
             // Computed once per render (not per cell) since it shares one solver
             // state across every empty cell — see computeLiveCandidates().
-            const liveCandidates = app.autoCandidates ? computeLiveCandidates(app.cfg, g, app.diag) : null;
+            const liveCandidates = app.autoCandidates
+                ? computeLiveCandidates(app.cfg, candidateStateGrid(), app.diag)
+                : null;
 
             cachedCells.forEach((cell, i) => {
                 cell.classList.remove('given');
@@ -1210,6 +1234,11 @@
         function placeColor(i, color) {
             app.playerGrid[i] = color;
             app.candidates[i] = null;
+
+            // Only a confirmed-correct placement should affect
+            // neighbouring manual candidate marks.
+            if (!app.solution || color !== app.solution[i]) return;
+
             for (const j of getRelatedIndices(app.cfg, i, app.diag)) {
                 if (app.candidates[j] && app.candidates[j].has(color)) {
                     const set = new Set(app.candidates[j]);
