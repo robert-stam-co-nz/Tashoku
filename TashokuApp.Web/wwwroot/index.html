@@ -345,10 +345,26 @@
             }
 
             .peg.conflict {
-                box-shadow: 0 0 0 3px var(--danger), 0 0 10px 2px rgba(220,38,38,0.45);
-            }
+                    box-shadow: 0 0 0 3px var(--danger), 0 0 10px 2px rgba(220,38,38,0.45);
+                }
 
-        /* Empty indicator */
+                .peg.selected-colour {
+                    box-shadow: 0 0 0 3px var(--text), 0 3px 10px rgba(0,0,0,0.25);
+                }
+
+                .peg.selected-colour.given {
+                    box-shadow: 0 0 0 3px var(--text), 0 3px 10px rgba(0,0,0,0.25);
+                }
+
+                .peg.selected-colour.hint {
+                    box-shadow: 0 0 0 3px var(--text), 0 3px 10px rgba(0,0,0,0.25);
+                }
+
+                .peg.selected-colour.conflict {
+                    box-shadow: 0 0 0 3px var(--text), 0 0 10px 2px rgba(220,38,38,0.45);
+                }
+
+            /* Empty indicator */
         .cell-empty-dot {
             width: 20%;
             height: 20%;
@@ -380,10 +396,15 @@
         }
 
             .candidate-slot.active {
-                box-shadow: 0 1px 2px rgba(0,0,0,0.15);
-            }
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+                }
 
-        /* ── Palette ─────────────────────────────────────────────── */
+                .candidate-slot.selected-colour {
+                    box-shadow: 0 0 0 1px var(--text), 0 3px 10px rgba(0,0,0,0.25);
+                    transform: scale(1.06);
+                }
+
+            /* ── Palette ─────────────────────────────────────────────── */
         .palette-wrap {
             display: flex;
             flex-direction: column;
@@ -426,9 +447,14 @@
                 background: var(--surface);
                 border: 2px solid var(--panel-border);
                 color: var(--text-muted);
-                font-size: 17px;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             }
+
+                .swatch.eraser svg {
+                    width: 18px;
+                    height: 18px;
+                    display: block;
+                }
 
                 .swatch.eraser.active {
                     border-color: var(--accent);
@@ -458,11 +484,6 @@
                     color: rgba(255,255,255,0.92);
                     pointer-events: none;
                 }
-
-        .palette-hint {
-            font-size: 11.5px;
-            color: var(--text-light);
-        }
 
         /* ── Actions ─────────────────────────────────────────────── */
         .actions {
@@ -568,15 +589,48 @@
         }
 
         .mistakes-text {
-            font-size: 24px;
             color: var(--text-muted);
             text-align: center;
             line-height: 1.6;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
             .mistakes-text.danger {
                 color: var(--danger);
                 font-weight: 600;
+            }
+
+        .mistakes-gauge {
+            display: inline-flex;
+            justify-content: flex-end;
+            gap: 6px;
+            padding: 6px;
+            border: 3px solid var(--text);
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+            background: var(--surface);
+        }
+
+        .mistakes-gauge-slot {
+            width: 24px;
+            height: 24px;
+            border-radius: 7px;
+            background: var(--c1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            flex-shrink: 0;
+        }
+
+            .mistakes-gauge-slot.error {
+                background: var(--c0);
+            }
+
+            .mistakes-gauge-slot.unused {
+                background: var(--cell-empty-border);
+                box-shadow: none;
+                opacity: 0.8;
             }
 
         .completion-toast {
@@ -661,9 +715,6 @@
             <button class="btn btn-primary" id="newBtn">New puzzle</button>
             <button class="btn btn-ghost" id="hintBtn">Hint</button>
         </div>
-        <div class="actions">
-            <button class="btn btn-ghost" id="inviteBtn">Invite a friend<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg></button>
-        </div>
         <!-- Board -->
         <div class="board-wrap" id="boardWrap">
             <svg class="diag-svg" id="boxSvg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
@@ -677,13 +728,10 @@
         <!-- Palette -->
         <div class="palette-wrap">
             <div class="palette-row" id="palette"></div>
-            <span class="palette-hint">Pick a colour · tap a cell to place it</span>
         </div>
 
         <!-- Status -->
         <div class="status-area">
-            <span class="badge" id="badge"></span>
-            <p class="status-text" id="statusText"></p>
             <p class="mistakes-text" id="mistakesText"></p>
         </div>
 
@@ -692,6 +740,9 @@
         <div class="actions" id="deviceActions" style="display:none;">
             <button class="btn btn-primary" id="shareBtn" disabled>Share Results<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg></button>
             <button class="btn btn-ghost" id="installBtn" style="display:none;">Install app</button>
+        </div>
+        <div class="actions">
+            <button class="btn btn-ghost" id="inviteBtn">Invite a friend<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg></button>
         </div>
         <p class="status-text" id="shareToast" style="display:none;">Copied to clipboard!</p>
         <div id="completionToast" class="completion-toast" style="display:none;">
@@ -731,8 +782,6 @@
             DOM.grid = document.getElementById('grid');
             DOM.boxSvg = document.getElementById('boxSvg');
             DOM.palette = document.getElementById('palette');
-            DOM.badge = document.getElementById('badge');
-            DOM.statusText = document.getElementById('statusText');
             DOM.mistakesText = document.getElementById('mistakesText');
             DOM.hintBtn = document.getElementById('hintBtn');
             DOM.pencilToggle = document.getElementById('pencilToggle');
@@ -1088,8 +1137,8 @@
             candidates: [],          // per-cell Set<colourIndex> of manual pencil marks (null = none/filled)
             pencilMode: false,       // false = placing colours, true = toggling candidate marks
             autoCandidates: false,   // true = show live-computed legal candidates instead of manual marks
-            hintsUsed: 0, maxHints: 3,
-            errorCount: 0, maxErrors: 3, failed: false,
+            hintsUsed: 0, maxHints: 4,
+            errorCount: 0, maxErrors: 4, failed: false,
             shareBlob: null,
         };
 
@@ -1108,6 +1157,7 @@
                 cell.className = 'cell';
                 cell.tabIndex = 0;
                 cell.dataset.idx = i;
+                cell.title = 'Cell: place the selected colour here, or erase an existing peg.';
 
                 // Box-boundary lines use the exact same weight and colour as the
                 // outer frame (3px solid var(--outer-line)); ordinary cell-to-cell
@@ -1148,17 +1198,17 @@
                 sw.style.background = `var(${COLOR_CSS[k]})`;
                 sw.style.color = darkText(k) ? '#1a1a1a' : '#ffffff';
                 sw.textContent = COLOR_LETTER[k];
-                sw.title = COLOR_NAME[k];
+                sw.title = `Swatch: select ${COLOR_NAME[k]} to place it on the grid.`;
                 sw.setAttribute('aria-label', COLOR_NAME[k]);
-                sw.addEventListener('click', () => { app.selectedTool = k; updatePaletteSelection(); });
+                sw.addEventListener('click', () => { app.selectedTool = k; render(); });
                 el.appendChild(sw);
             }
             const er = document.createElement('button');
             er.className = 'swatch eraser';
-            er.textContent = '✕';
-            er.title = 'Erase';
+            er.innerHTML = '<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.9995 13L10.9995 6.00004M20.9995 21H7.99955M10.9368 20.0628L19.6054 11.3941C20.7935 10.2061 21.3875 9.61207 21.6101 8.92709C21.8058 8.32456 21.8058 7.67551 21.6101 7.07298C21.3875 6.388 20.7935 5.79397 19.6054 4.60592L19.3937 4.39415C18.2056 3.2061 17.6116 2.61207 16.9266 2.38951C16.3241 2.19373 15.675 2.19373 15.0725 2.38951C14.3875 2.61207 13.7935 3.2061 12.6054 4.39415L4.39366 12.6059C3.20561 13.794 2.61158 14.388 2.38902 15.073C2.19324 15.6755 2.19324 16.3246 2.38902 16.9271C2.61158 17.6121 3.20561 18.2061 4.39366 19.3941L5.06229 20.0628C5.40819 20.4087 5.58114 20.5816 5.78298 20.7053C5.96192 20.815 6.15701 20.8958 6.36108 20.9448C6.59126 21 6.83585 21 7.32503 21H8.67406C9.16324 21 9.40784 21 9.63801 20.9448C9.84208 20.8958 10.0372 20.815 10.2161 20.7053C10.418 20.5816 10.5909 20.4087 10.9368 20.0628Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+            er.title = 'Erase: remove a placed colour or clear a cell.';
             er.setAttribute('aria-label', 'eraser');
-            er.addEventListener('click', () => { app.selectedTool = app.cfg.N; updatePaletteSelection(); });
+            er.addEventListener('click', () => { app.selectedTool = app.cfg.N; render(); });
             el.appendChild(er);
             updatePaletteSelection();
         }
@@ -1203,31 +1253,23 @@
             return g;
         }
 
-        // Grid used for candidate calculation. Only givens and
-        // player entries that are actually correct contribute to
-        // the constraint state. Incorrect entries remain visible
-        // and highlighted, but do not suppress candidates elsewhere.
-        function candidateStateGrid() {
-            const g = new Array(app.cfg.N * app.cfg.N).fill(-1);
-
+        function countCurrentErrors() {
+            if (!app.solution) return 0;
+            let count = 0;
             for (let i = 0; i < app.cfg.N * app.cfg.N; i++) {
-                if (app.givenSet.has(i)) {
-                    g[i] = app.solution[i];
-                } else if (
-                    app.playerGrid[i] !== -1 &&
-                    app.solution &&
-                    app.playerGrid[i] === app.solution[i]
-                ) {
-                    g[i] = app.playerGrid[i];
-                }
+                if (app.givenSet.has(i) || app.hintSet.has(i)) continue;
+                if (app.playerGrid[i] !== -1 && app.playerGrid[i] !== app.solution[i]) count++;
             }
-
-            return g;
+            return count;
         }
 
         function render() {
+            app.errorCount = countCurrentErrors();
+            if (!app.failed && app.errorCount >= app.maxErrors) triggerFail();
+
             const g = fullGrid();
             const conflicts = getConflicts(app.cfg, g);
+            const selectedColour = app.selectedTool < app.cfg.N ? app.selectedTool : -1;
 
             // Computed once per render (not per cell) since it shares one solver
             // state across every empty cell — see computeLiveCandidates().
@@ -1258,6 +1300,9 @@
                     if (conflicts.has(i)) {
                         peg.classList.add('conflict');
                     }
+                    if (val === selectedColour) {
+                        peg.classList.add('selected-colour');
+                    }
                     cell.appendChild(peg);
                 } else {
                     const colourIndices = app.autoCandidates
@@ -1265,7 +1310,7 @@
                         : (app.candidates[i] ? [...app.candidates[i]].sort((a, b) => a - b) : []);
 
                     if (colourIndices.length > 0) {
-                        cell.appendChild(buildCandidatesGrid(colourIndices, app.cfg.N));
+                        cell.appendChild(buildCandidatesGrid(colourIndices, app.cfg.N, selectedColour));
                     } else {
                         const dot = document.createElement('div');
                         dot.className = 'cell-empty-dot';
@@ -1287,7 +1332,7 @@
 
         // 3 columns × 2 rows — same shape as the box itself — holding one slot
         // per possible colour, in the same R G B / Y P T order as the palette.
-        function buildCandidatesGrid(activeColourIndices, numColors) {
+        function buildCandidatesGrid(activeColourIndices, numColors, selectedColour = -1) {
             const wrap = document.createElement('div');
             wrap.className = 'candidates-grid';
             const activeSet = new Set(activeColourIndices);
@@ -1296,6 +1341,7 @@
                 slot.className = 'candidate-slot';
                 if (activeSet.has(k)) {
                     slot.classList.add('active');
+                    if (k === selectedColour) slot.classList.add('selected-colour');
                     slot.style.background = `var(${COLOR_CSS[k]})`;
                     slot.style.color = darkText(k) ? '#1a1a1a' : '#ffffff';
                     slot.textContent = COLOR_LETTER[k];
@@ -1310,43 +1356,32 @@
             const filled = g.filter(v => v !== -1).length;
             const solved = !app.failed && (filled === total && conflicts.size === 0);
 
-            const badgeEl = document.getElementById('badge');
-            const statusEl = document.getElementById('statusText');
             const mistakesEl = document.getElementById('mistakesText');
             const hintBtn = document.getElementById('hintBtn');
             const hintsLeft = app.maxHints - app.hintsUsed;
 
             hintBtn.disabled = solved || app.failed || hintsLeft <= 0;
             hintBtn.textContent = hintsLeft <= 0 ? 'No hints left' : `Hint (${hintsLeft} left)`;
+            updateModeToggleAvailability(solved || app.failed);
 
             if (app.failed) {
-                badgeEl.style.display = 'none';
-                statusEl.style.display = 'none';
                 mistakesEl.className = 'mistakes-text danger';
-                mistakesEl.textContent = `${app.errorCount}/${app.maxErrors} mistakes`;
+                mistakesEl.innerHTML = buildMistakesGauge();
                 showCompletionToast(false);
                 onPuzzleStateChange(false, conflicts.size, true);
                 return;
             }
 
             if (solved) {
-                badgeEl.style.display = 'none';
-                statusEl.style.display = 'none';
-                mistakesEl.className = 'mistakes-text';
-                mistakesEl.textContent = app.errorCount > 0 ? `${app.errorCount}/${app.maxErrors} mistakes` : '';
+                mistakesEl.className = app.errorCount > 0 ? 'mistakes-text danger' : 'mistakes-text';
+                mistakesEl.innerHTML = buildMistakesGauge();
                 showCompletionToast(true);
                 onPuzzleStateChange(true, conflicts.size, false);
                 return;
             }
 
-            badgeEl.className = '';
-            badgeEl.textContent = '';
-
-            statusEl.className = '';
-            statusEl.textContent = '';
-
             mistakesEl.className = app.errorCount > 0 ? 'mistakes-text danger' : 'mistakes-text';
-            mistakesEl.textContent = `${app.errorCount}/${app.maxErrors} mistakes`;
+            mistakesEl.innerHTML = buildMistakesGauge();
             onPuzzleStateChange(false, conflicts.size, false);
         }
 
@@ -1443,10 +1478,6 @@
                 app.playerGrid[i] = -1;
             } else {
                 placeColor(i, app.selectedTool);
-                if (app.selectedTool !== app.solution[i]) {
-                    app.errorCount++;
-                    if (app.errorCount >= app.maxErrors) triggerFail();
-                }
             }
             render();
         }
@@ -1482,6 +1513,27 @@
         // Restore missing function that returns clue counts for 9×9 with diagonal constraint
         function clueCount(cfg, diag, diff) {
             return { hard: 22, medium: 30, easy: 40 }[diff];
+        }
+
+        function difficultyLimits(diff) {
+            return {
+                easy: { maxErrors: 5, maxHints: 5 },
+                medium: { maxErrors: 4, maxHints: 4 },
+                hard: { maxErrors: 3, maxHints: 3 },
+            }[diff] || { maxErrors: 4, maxHints: 4 };
+        }
+
+        function applyDifficultyLimits() {
+            const limits = difficultyLimits(app.diff);
+            app.maxErrors = limits.maxErrors;
+            app.maxHints = limits.maxHints;
+        }
+
+        function updateDifficultyButtons() {
+            ['hard', 'medium', 'easy'].forEach(d => {
+                document.getElementById('btn' + d[0].toUpperCase() + d.slice(1))
+                    .classList.toggle('active', d === app.diff);
+            });
         }
 
         /* ── Game State Persistence ──────────────────────────────────── */
@@ -1521,6 +1573,8 @@
                 app.failed = state.failed;
                 app.diff = state.diff;
                 app.diag = state.diag;
+                applyDifficultyLimits();
+                updateDifficultyButtons();
                 return true;
             } catch (e) {
                 console.warn('Failed to load game state:', e);
@@ -1542,6 +1596,8 @@
         }
 
         function newPuzzle() {
+            applyDifficultyLimits();
+            updateDifficultyButtons();
             const count = clueCount(app.cfg, app.diag, app.diff);
             const { solution, given } = generatePuzzle(app.cfg, count, app.diag);
             app.solution = solution;
@@ -1559,18 +1615,32 @@
 
         function setDiff(diff) {
             app.diff = diff;
-            ['hard', 'medium', 'easy'].forEach(d => {
-                document.getElementById('btn' + d[0].toUpperCase() + d.slice(1))
-                    .classList.toggle('active', d === diff);
-            });
+            updateDifficultyButtons();
             newPuzzle();
+        }
+
+        function updateModeToggleAvailability(isCompleted) {
+            const pencilCard = document.getElementById('pencilCard');
+            const pencilBtn = document.getElementById('pencilToggle');
+            const autoBtn = document.getElementById('autoToggle');
+
+            autoBtn.disabled = isCompleted;
+            pencilBtn.disabled = isCompleted || app.autoCandidates;
+
+            if (isCompleted || app.autoCandidates) {
+                pencilCard.style.opacity = '0.5';
+                pencilBtn.style.pointerEvents = 'none';
+            } else {
+                pencilCard.style.opacity = '1';
+                pencilBtn.style.pointerEvents = 'auto';
+            }
         }
 
         /* ── Pencil mode: toggling a candidate mark vs placing a colour ──── */
         function setPencilMode(on) {
-            if (app.autoCandidates) return; // disabled while auto candidates is on
-            app.pencilMode = on;
             const btn = document.getElementById('pencilToggle');
+            if (app.autoCandidates || btn.disabled) return; // disabled while auto candidates is on or game is complete
+            app.pencilMode = on;
             btn.classList.toggle('on', on);
             btn.setAttribute('aria-pressed', on);
             document.getElementById('pencilLabel').textContent = on ? 'ON' : 'OFF';
@@ -1580,22 +1650,15 @@
            Turning this on forces pencil mode off and disables its toggle —
            there's nothing to manually mark once everything is auto-derived. */
         function setAutoCandidates(on) {
-            app.autoCandidates = on;
             const btn = document.getElementById('autoToggle');
+            if (btn.disabled) return;
+            app.autoCandidates = on;
             btn.classList.toggle('on', on);
             btn.setAttribute('aria-pressed', on);
             document.getElementById('autoLabel').textContent = on ? 'ON' : 'OFF';
 
-            const pencilCard = document.getElementById('pencilCard');
-            const pencilBtn = document.getElementById('pencilToggle');
-            if (on) {
-                setPencilModeForced(false);
-                pencilCard.style.opacity = '0.5';
-                pencilBtn.style.pointerEvents = 'none';
-            } else {
-                pencilCard.style.opacity = '1';
-                pencilBtn.style.pointerEvents = 'auto';
-            }
+            if (on) setPencilModeForced(false);
+            updateModeToggleAvailability(false);
             render();
         }
 
@@ -1609,18 +1672,34 @@
             document.getElementById('pencilLabel').textContent = on ? 'ON' : 'OFF';
         }
 
+        function gauge(used, max, filledEmoji) {
+            return '⬜️'.repeat(max - used) + filledEmoji.repeat(used);
+        }
+
+        function buildMistakesGauge() {
+            const totalSlots = 5;
+            const activeSlots = Math.max(0, Math.min(app.maxErrors, totalSlots));
+            const errors = Math.max(0, Math.min(app.errorCount, activeSlots));
+            const leadingUnused = totalSlots - activeSlots;
+            const redStart = totalSlots - errors;
+            const slots = [];
+            for (let i = 0; i < totalSlots; i++) {
+                let slotClass = 'mistakes-gauge-slot';
+                if (i < leadingUnused) slotClass += ' unused';
+                else if (i >= redStart) slotClass += ' error';
+                slots.push(`<span class="${slotClass}" aria-hidden="true"></span>`);
+            }
+            return `<span class="mistakes-gauge" role="img" aria-label="${errors} of ${activeSlots} mistakes used" title="Error gauge: red swatches show mistakes used, green swatches show mistakes remaining, grey swatches are unused in this difficulty.">${slots.join('')}</span>`;
+        }
+
         /* ════════════════════════════════════════════════════════════
            Share result
            ════════════════════════════════════════════════════════════ */
         function buildShareText() {
             const diffLabel = app.diff.charAt(0).toUpperCase() + app.diff.slice(1).toLowerCase();
 
-            function gauge(used, max, filledEmoji) {
-                return '⬜️'.repeat(max - used) + filledEmoji.repeat(used);
-            }
-
-            const statusIcon = app.errorCount < 3 ? '✅' : '❌';
-            const filledSquare = app.errorCount < 3 ? '🟩' : '🟥';
+            const statusIcon = app.errorCount < app.maxErrors ? '✅' : '❌';
+            const filledSquare = app.errorCount < app.maxErrors ? '🟩' : '🟥';
 
             const lines = [
                 'Tashoku – ' + diffLabel,
@@ -1745,13 +1824,8 @@
             }
 
             if (shareBtn) {
-                const wasEnded = _wasSolved || _wasFailed;
                 // Keep the button visible; enable/disable it based on game end
                 shareBtn.disabled = !gameEnded;
-                // Pre-generate image and focus button the first time the game ends
-                if (gameEnded && !wasEnded) {
-                    setTimeout(() => { if (shareBtn) shareBtn.focus(); }, 150);
-                }
             }
 
             _wasSolved = solved;
@@ -1795,7 +1869,7 @@
         // this is safe to leave in even before you've deployed anywhere.
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch((err) => {
+                navigator.serviceWorker.register('service-worker.js').catch((err) => {
                     console.warn('Service worker registration failed:', err);
                 });
             });
