@@ -1772,10 +1772,10 @@
             const statusIcon = app.errorCount < app.maxErrors ? '✅' : '❌';
 
             const lines = [
-                statusIcon + ' ' + 'Tashoku – ' + diffLabel,
-                '💡 ' + buildShareHintsGauge(),
-                statusIcon + ' ' + buildShareMistakesGauge(),
-                'Play here: <robert-stam-co-nz\u200B.github\u200B.io/Tashoku/>'
+                'Tashoku – ' + diffLabel,
+                'result: ' + statusIcon,
+                'hints: ' + buildShareHintsGauge(),
+                'mistakes: ' + buildShareMistakesGauge()               
             ];
             lines.join('\n');
             return lines;
@@ -1789,7 +1789,7 @@
                     // Text only, no URL. Messenger (and others) unfurl any link-shaped
                     // string inside `text` too, so leaving it out entirely is what
                     // keeps the emoji/gauge formatting intact.
-                    await navigator.share({ text: text });
+                    await navigator.share({ text: text, url: 'https://robert-stam-co-nz.github.io/Tashoku/' });
                     return;
                 } catch (err) {
                     if (err && err.name === 'AbortError') return;
