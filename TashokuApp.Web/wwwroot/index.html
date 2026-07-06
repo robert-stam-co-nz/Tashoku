@@ -1777,8 +1777,8 @@
                 statusIcon + ' ' + buildShareMistakesGauge(),
                 'Play here: <robert-stam-co-nz\u200B.github\u200B.io/Tashoku/>'
             ];
-
-            return lines.join('\n');
+            lines.join('\n');
+            return '```\n' + lines + '\n```';
         }
 
         async function shareResult() {
