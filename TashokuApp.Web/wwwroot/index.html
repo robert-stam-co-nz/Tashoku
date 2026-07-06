@@ -1772,12 +1772,12 @@
             const statusIcon = app.errorCount < app.maxErrors ? '✅' : '❌';
 
             const shareText = [
-                '```text',
                 'Tashoku – ' + diffLabel,
-                '🏆 Result:   ' + statusIcon,
-                '💡 Hints:    ' + buildShareHintsGauge(),
-                '❌ Mistakes: ' + buildShareMistakesGauge(),
-                '```'
+                // Use \u2007 instead of regular spaces to pad the text length evenly
+                '🏆 Result:\u2007\u2007\u2007' + statusIcon,
+                '💡 Hints:\u2007\u2007\u2007\u2007' + buildShareHintsGauge(),
+                '❌ Mistakes:\u2007' + buildShareMistakesGauge(),
+                ''
             ].join('\n');
 
             return (shareText);
@@ -1789,9 +1789,6 @@
 
             if (navigator.share) {
                 try {
-                    // Text only, no URL. Messenger (and others) unfurl any link-shaped
-                    // string inside `text` too, so leaving it out entirely is what
-                    // keeps the emoji/gauge formatting intact.
                     await navigator.share({ text: text, url: location.href });
                     return;
                 } catch (err) {
