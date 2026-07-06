@@ -1772,10 +1772,12 @@
             const statusIcon = app.errorCount < app.maxErrors ? '✅' : '❌';
 
             const shareText = [
+                '```',
                 'Tashoku – ' + diffLabel,
                 '🏆 Result:   ' + statusIcon,
                 '💡 Hints:    ' + buildShareHintsGauge(),
-                '❌ Mistakes: ' + buildShareMistakesGauge()
+                '❌ Mistakes: ' + buildShareMistakesGauge(),
+                '```'
             ].join('\n');
 
             return (shareText);
